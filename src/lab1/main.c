@@ -6,23 +6,23 @@
 
 #include <stm32l031xx.h>
 
-void delay(unsigned int ms)
+void delay(volatile unsigned int ms)
 {
     while (ms--);
 }
 
 int main()
 {
-    RCC->IOPENR |= (1 << 1);
-    GPIOB->MODER = (1 << 6);
+    RCC->IOPENR |= (1 << 1); // Enable clock
+    GPIOB->MODER = (1 << 6); // Set mode
     
     while (1)
     {
-        GPIOB->ODR = (1 << 3);
+        GPIOB->ODR = (1 << 3); // Turn on LED
 
         delay(1000000);
 
-        GPIOB->ODR = 0x0;
+        GPIOB->ODR = 0x0; // Turn off LED
 
         delay(1000000);
     }
