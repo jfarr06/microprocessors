@@ -13,12 +13,12 @@ void delay(volatile unsigned int ms)
 
 int main()
 {
-    RCC->IOPENR |= (1 << 1); // Enable clock
-    GPIOB->MODER = (1 << 6); // Set mode
+    RCC->IOPENR |= RCC_IOPENR_GPIOBEN; // Enable clock
+    GPIOB->MODER = GPIO_MODER_MODE3_1; // Set mode
     
     while (1)
     {
-        GPIOB->ODR = (1 << 3); // Turn on LED
+        GPIOB->ODR = GPIO_ODR_OD3; // Turn on LED
 
         delay(1000000);
 

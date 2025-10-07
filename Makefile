@@ -1,16 +1,13 @@
 LAB :=
 
-.PHONY: upload build all
-
-all:
-	platformio -f -c vim run -v 
+.PHONY: upload build
 
 clean:
 	platformio -f -c vim run -v --target clean 
 
 build:
 ifeq ($(strip $(LAB)),)
-	$(info $$LAB is required!)
+	platformio -f -c vim run -v 
 else
 	platformio -f -c vim run -v -e lab$(LAB)
 endif
