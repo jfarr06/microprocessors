@@ -17,3 +17,4 @@ This project uses PlatformIO as a baseline tool and also provides a Makefile to 
 
 - Build: `make build`
 - Upload to a board: `make upload`
+- Build image files: `make images`
