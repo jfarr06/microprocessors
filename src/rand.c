@@ -1,5 +1,6 @@
 #include <rand.h>
-#include <nucleo_l031k6_common.h>
+#include <nucleo_f031k6/adc.h>
+#include <nucleo_f031k6/common.h>
 
 static uint32_t rand_seed = 0;
 void init_rand()

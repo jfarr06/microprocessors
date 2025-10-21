@@ -1,5 +1,7 @@
-#ifndef NUCLEO_L031K6_DEFINES_H_
-#define NUCLEO_L031K6_DEFINES_H_
+#ifndef NUCLEO_F031K6_DEFINES_H_
+#define NUCLEO_F031K6_DEFINES_H_
+
+#define F031K6_UNUSED(x) (void)(x)
 
 //================ PINMODE
 
@@ -32,5 +34,13 @@
 #define SPI_CR2_8BIT_Pos             (8U)
 #define SPI_CR2_8BIT_Msk             (0b111UL << SPI_CR2_8BIT_Pos)
 #define SPI_CR2_8BIT                 SPI_CR2_8BIT_Msk
+
+#define FLASH_ACR_LATENCY1_Pos         (1U)
+#define FLASH_ACR_LATENCY1_Msk         (0x1UL << FLASH_ACR_LATENCY1_Pos)
+#define FLASH_ACR_LATENCY1             FLASH_ACR_LATENCY1_Msk
+
+#define FLASH_ACR_LATENCY2_Pos           (2U)
+#define FLASH_ACR_LATENCY2_Msk           (0x1UL << FLASH_ACR_LATENCY2_Pos)
+#define FLASH_ACR_LATENCY2               FLASH_ACR_LATENCY2_Msk
 
 #endif
