@@ -12,7 +12,7 @@
 
 void init_sound()
 {
-    DBG_TRACE("Initializing sound on PB1, base_freq = %p, clk_freq = %p", SOUND_PRESCALER_BASFREQ, SOUND_PRESCALER_CLKFREQ);
+    DBG_INFO("Initializing sound on PB1, base_freq = %p, clk_freq = %p", SOUND_PRESCALER_BASFREQ, SOUND_PRESCALER_CLKFREQ);
 
     pin_mode(SOUND_PORT, SOUND_PINOUT, PINMODE_ALTERNATE); // select alternative function for PB1
 

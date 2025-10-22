@@ -17,7 +17,7 @@
 
 void init_io()
 {
-    DBG_TRACE("Initializing inputs...");
+    DBG_INFO("Initializing inputs...");
 
     pin_mode(GPIOB, BUTTON_RIGHT_PINOUT, PINMODE_INPUT);
     pin_mode(GPIOB, BUTTON_LEFT_PINOUT, PINMODE_INPUT);
@@ -55,4 +55,9 @@ bool button_down_pressed()
 bool button_enter_pressed()
 {
     return get_input_status(GPIOA, BUTTON_ENTER, PULLMODE_PULLUP);
+}
+
+bool any_input()
+{
+    return button_left_pressed() || button_right_pressed() || button_up_pressed() || button_down_pressed() || button_enter_pressed();
 }

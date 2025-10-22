@@ -11,6 +11,7 @@
 #include <io.h>
 #include <debug.h>
 #include <images.h>
+#include <sprites.h>
 #include <display.h>
 
 #include <nucleo_f031k6/sound.h>
@@ -26,18 +27,25 @@ int main()
     init_systick();
 
     DBG_INIT();
-    DBG_TRACE("Initializing...");
+    DBG_INFO("Initializing...");
 
     init_sound();
     init_display();
     init_io();
+    init_sprites();
 
-    DBG_TRACE("Done initializing");
+    DBG_INFO("Done initializing");
 
-    RENDER_IMAGE(dg1, 20, 80);
+    while (1)
+    {
+        if (!any_input()) continue;
+
+        sprites_step();
+        sys_delay(10);
+    }
 
     //========== UPVARS
-    
+    /*
     int x = 50, y = 50;
     int oldx = x, oldy = y;
     int direction = 0;
@@ -126,5 +134,5 @@ int main()
                 RENDER_IMAGE_ORIENTED(deco3, x, y, 0, vinverted);
             }
         }
-    }
+    }*/
 }

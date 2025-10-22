@@ -11,6 +11,6 @@
 /**
  *
  */
-#define RENDER_IMAGE_ORIENTED(name, x, y, h, v) (void)put_image(x, y, IMG_##name##_x, IMG_##name##_y, IMG_##name##_data, h, v)
+#define RENDER_IMAGE_ORIENTED(name, x, y, h, v) (void)put_image(x, y, IMG_##name##_width, IMG_##name##_height, IMG_##name##_data, h, v)
 
 #endif

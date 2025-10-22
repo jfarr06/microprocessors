@@ -10,5 +10,6 @@ bool button_left_pressed();
 bool button_up_pressed();
 bool button_down_pressed();
 bool button_enter_pressed();
+bool any_input();
 
 #endif

@@ -3,12 +3,15 @@
 
 from PIL import Image, ImageFile
 from os import sys, path, walk
+from itertools import islice
 
 header_entry_format = """
-#define IMG_{0}_x ({1})
-#define IMG_{0}_y ({2})
+#define IMG_{0}_width  ({1})
+#define IMG_{0}_height ({2})
 #pragma pack(push, 1)
-static const uint16_t IMG_{0}_data[] = {3};
+static const uint16_t IMG_{0}_data[] = {{
+{3}
+}};
 #pragma pack(pop)
 """
 
@@ -33,6 +36,12 @@ def rgb16(r: int, g: int, b: int) -> str:
     return f"0x{rvalue:04x}"
 
 
+def chunk(data: list, size: int) -> list:
+    it = iter(data)
+
+    return [list(islice(it, size)) for _ in range((len(data) + size - 1) // size)]
+
+
 def process_bmp(file_path: str) -> str:
     image: ImageFile.ImageFile = Image.open(file_path)
 
@@ -43,13 +52,26 @@ def process_bmp(file_path: str) -> str:
 
     size = image.size
     image_name = path.splitext(path.basename(file_path))[0].replace(" ", "_")
-    pixels = image.getdata()
+    pixels = list(image.getdata())
+    pixel_chunks = chunk(pixels, size[0])
     data_list = []
 
-    for px in pixels:
-        data_list.append(rgb16(px[0], px[1], px[2]))
+    print(pixels)
+    print(pixel_chunks)
 
-    data = f"{{{', '.join(data_list)}}}"
+    for px_chunk in pixel_chunks:
+        chunks = []
+
+        print(px_chunk)
+
+        for px in px_chunk:
+            rgb = rgb16(px[0], px[1], px[2])
+
+            chunks.append(rgb)
+
+        data_list.append(f"\t{', '.join(chunks)}")
+
+    data = f"{',\n'.join(data_list)}"
 
     return header_entry_format.format(image_name, size[0], size[1], data)
 

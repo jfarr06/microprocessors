@@ -7,9 +7,6 @@
 #include <st7735s.h>
 #include <display.h>
 
-#define SCREEN_W 128
-#define SCREEN_H 160
-
 uint16_t rgb_to_word(uint16_t r, uint16_t g, uint16_t b)
 {
 	uint16_t rvalue = 0;
@@ -71,7 +68,7 @@ void put_image(uint16_t x, uint16_t y, uint16_t width, uint16_t height, const ui
             else
                 offsetX = width - x - 1;
 
-            uint16_t colour = imageBuf[offsetY+offsetX];
+            uint16_t colour = imageBuf[offsetY + offsetX];
             st7735s_bufw16(colour, 1);
         }
     }
@@ -83,7 +80,14 @@ void print_text(const char *text, const uint32_t len, uint8_t scale, uint16_t x,
 {
     if (scale <= 0) scale = 1;
 
-    uint16_t textBox[FONT_WIDTH * FONT_HEIGHT * scale * scale];
+    if (fgColour == bgColour)
+    {
+        fill_rect(x, y, FONT_WIDTH * scale * len, FONT_HEIGHT * scale, fgColour);
+
+        return;
+    }
+
+    uint16_t textBox[FONT_WIDTH * scale + FONT_HEIGHT * scale];
 
     for (int i = 0; i < len; i++)
     {
@@ -143,11 +147,11 @@ void print_centered_text(const char *text, const uint32_t len, uint8_t scale, in
 
 void init_display()
 {
-    DBG_TRACE("Initializing display...");
+    DBG_INFO("Initializing display...");
 
     init_st7735s(); 
 
-    DBG_TRACE("Filling screen with black...");
+    DBG_INFO("Filling screen with black...");
 
     fill_rect(0, 0, SCREEN_W, SCREEN_H, 0x00);
 }

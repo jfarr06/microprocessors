@@ -50,7 +50,7 @@ uint16_t st7735s_transfer_spi16(uint16_t data)
 
 void init_spi()
 {
-    DBG_TRACE("Initializing SPI with PA5 and PA7 as ports...");
+    DBG_INFO("Initializing SPI with PA5 = SCK and PA7 = MOSI as ports...");
 
     RCC->APB2ENR |= RCC_APB2ENR_SPI1EN; // Enable SPI
 
@@ -189,7 +189,7 @@ void st7735s_cmd(uint8_t cmd, uint8_t *data, size_t dataLen)
 
 void st7735s_rstcycl()
 {
-    DBG_TRACE("Doing ST7735S reset cycle...");
+    DBG_INFO("Doing ST7735S reset cycle...");
 
     cs_hi();
     rst_lo();
@@ -318,7 +318,7 @@ static const uint8_t default_bp = 0x3c;
 
 void init_st7735s()
 {
-    DBG_TRACE("Initializing ST7735S, PA3 = RST, PA4 = CS, PA6 = D/C...");
+    DBG_INFO("Initializing ST7735S, PA3 = RST, PA4 = CS, PA6 = D/C...");
 
     RCC->AHBENR |= RCC_AHBENR_GPIOAEN;
     pin_mode(GPIOA, RST_PINOUT, PINMODE_OUTPUT); // PA3 = Reset
@@ -329,7 +329,7 @@ void init_st7735s()
 
     //=========== BOOT ===========
 
-    DBG_TRACE("Doing ST7735S bootup sequence...");
+    DBG_INFO("Doing ST7735S bootup sequence...");
 
     st7735s_rstcycl(); // Initial reset
     st7735s_swreset(); // SW reset
@@ -337,7 +337,7 @@ void init_st7735s()
 
     //======= PARAMS =========
 
-    DBG_TRACE("Setting default ST7735S parameters...");
+    DBG_INFO("Setting default ST7735S parameters...");
 
     st7735s_frmctr1(default_rtn, default_fp, default_bp); // Normal mode
     st7735s_frmctr2(default_rtn, default_fp, default_bp); // Idle mode
@@ -347,7 +347,7 @@ void init_st7735s()
     st7735s_madctl(ST7735S_MADCTL_BGR); // BGR color mode
     st7735s_colmod(ST7735S_COLMOD_16BIT); // 16 bit colour mode
 
-    DBG_TRACE("Turning ST7735S display on...");
+    DBG_INFO("Turning ST7735S display on...");
 
     st7735s_dispon(); // Turn display on
 }

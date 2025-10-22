@@ -3,6 +3,15 @@
 
 #include <stdint.h>
 
+#define SCREEN_W 128
+#define SCREEN_H 160
+
+#define HORIZONAL_ORIENTATION_LEFT  0
+#define HORIZONAL_ORIENTATION_RIGHT 1
+
+#define VERTICAL_ORIENTATION_DOWN 0
+#define VERTICAL_ORIENTATION_UP   1
+
 void init_display(void);
 
 void put_pixel(uint16_t x, uint16_t y, uint16_t colour);
