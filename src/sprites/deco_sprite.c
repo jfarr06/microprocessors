@@ -29,7 +29,7 @@ void SPRITE_FUNC(deco, step)(sprite* const self)
 
     if (button_right_pressed())
     {
-        if (self->x < 110)
+        if (self->x < SCREEN_W-self->width)
         {
             hdirection = 1;
 
@@ -42,7 +42,7 @@ void SPRITE_FUNC(deco, step)(sprite* const self)
 
     if (button_left_pressed())
     {
-        if (self->x > 10)
+        if (self->x > 0)
         {
             self->x--;
             hmoved = true;
@@ -53,7 +53,7 @@ void SPRITE_FUNC(deco, step)(sprite* const self)
 
     if (button_down_pressed())
     {
-        if (self->y < 140)
+        if (self->y < SCREEN_H-self->height)
         {
             vdirection = 1;
 
@@ -66,7 +66,7 @@ void SPRITE_FUNC(deco, step)(sprite* const self)
 
     if (button_up_pressed())
     {
-        if (self->y > 16)
+        if (self->y > 0)
         {
             self->y--;
             vmoved = true;

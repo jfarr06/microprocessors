@@ -9,6 +9,7 @@
 #include <stm32f031x6.h>
 
 #include <io.h>
+#include <notes.h>
 #include <debug.h>
 #include <images.h>
 #include <sprites.h>
@@ -36,12 +37,39 @@ int main()
 
     DBG_INFO("Done initializing");
 
+    uint16_t frm = 0;
+    bool playing_sound = false;
+
+    uint16_t speed_factor = 5;
+
     while (1)
     {
-        if (!any_input()) continue;
 
-        sprites_step();
+        if (frm % speed_factor == 0)
+        {
+            if (playing_sound)
+            {
+                play_sound(0);
+                playing_sound = false;
+            } else {
+                if (frm % (speed_factor * 3) == 0)
+                    play_sound(D5);
+                else if (frm % (speed_factor * 4) == 0)
+                    play_sound(F3);
+                else
+                    play_sound(E5);
+
+                playing_sound = true;
+            }
+        }
+
+        //if (any_input()) 
+        {
+            sprites_step();
+        }
+        
         sys_delay(10);
+        frm++;
     }
 
     //========== UPVARS
