@@ -76,6 +76,40 @@ void put_image(uint16_t x, uint16_t y, uint16_t width, uint16_t height, const ui
    st7735s_bufw_end(); 
 }
 
+void put_image_fake_transparency(uint16_t x, uint16_t y, uint16_t width, uint16_t height, const uint16_t *imageBuf, bool delete, int hOrientation, int vOrientation)
+{
+    uint16_t ox = x, oy = y;
+
+    for (y = 0; y < height; y++)
+    {
+        uint32_t offsetY = 0;
+        if (vOrientation == 0)
+            offsetY = y * width;
+        else
+            offsetY = (height - (y + 1)) * width;
+
+        for (x = 0; x < width; x++)
+        {
+            uint32_t offsetX = 0;
+            if (hOrientation == 0)
+                offsetX = x;
+            else
+                offsetX = width - x - 1;
+
+            uint16_t colour = imageBuf[offsetY + offsetX];
+            if (colour)
+            {
+                if (delete)
+                    put_pixel(ox + x, oy + y, 0);
+                else
+                    put_pixel(ox + x, oy + y, colour);
+            }
+        }
+    }
+
+   st7735s_bufw_end(); 
+}
+
 void print_text(const char *text, const uint32_t len, uint8_t scale, uint16_t x, uint16_t y, uint16_t fgColour, uint16_t bgColour)
 {
     if (scale <= 0) scale = 1;

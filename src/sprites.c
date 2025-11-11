@@ -1,5 +1,3 @@
-#include <stdlib.h>
-
 #include <display.h>
 #include <sprites.h>
 #include <sys/reent.h>
@@ -109,10 +107,26 @@ void default_sprite_render(sprite *const self)
     {
         if (self->oldx == self->x && self->oldy == self->y) goto img;
 
-        fill_rect(self->oldx, self->oldy, self->width, self->height, 0x0000);
+        if (self->has_transparency)
+        {
+            // set 1 frame to null then set old stuff to new stuff
+            put_image_fake_transparency(self->oldx, self->oldy, self->old_width, self->old_height, self->old_img_data, true, self->old_horientation, self->old_vorientation);
+
+            self->old_width = self->width;
+            self->old_height = self->height;
+            self->old_img_data = self->img_data;
+            self->old_horientation = self->horientation;
+            self->old_vorientation = self->vorientation;
+        }
+        else    
+            fill_rect(self->oldx, self->oldy, self->width, self->height, 0x0000);
     }
 
-img:put_image(self->x, self->y, self->width, self->height, self->img_data, self->horientation, self->vorientation);
+img:
+    if (self->has_transparency)
+        put_image_fake_transparency(self->x, self->y, self->width, self->height, self->img_data, false, self->horientation, self->vorientation);
+    else
+        put_image(self->x, self->y, self->width, self->height, self->img_data, self->horientation, self->vorientation);
 }
 
 static bool point_is_intersecting(sprite* const self, uint16_t px, uint16_t py)
@@ -125,7 +139,7 @@ static bool point_is_intersecting(sprite* const self, uint16_t px, uint16_t py)
     return px >= x1 && px <= x2 && py >= y1 && py <= y2;
 }
 
-bool default_is_intersecting(sprite* const self, sprite* const other)
+bool is_intersecting(sprite* const self, sprite* const other)
 {
     return point_is_intersecting(self, other->x, other->y) || // top left
            point_is_intersecting(self, other->x + other->width, other->y) || // top right

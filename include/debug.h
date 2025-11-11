@@ -7,6 +7,7 @@
 #ifndef DEBUG
 #define DBG_INIT()
 #define DBG_TRACE(...)
+#define DBG_INFO(...)
 #else
 #include <nucleo_f031k6/serial.h>
 

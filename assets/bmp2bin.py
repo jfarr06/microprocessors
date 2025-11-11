@@ -8,7 +8,7 @@ from itertools import islice
 header_entry_format = """
 #define IMG_{0}_width  ({1})
 #define IMG_{0}_height ({2})
-#pragma pack(push, 1)
+#pragma pack(push, 2)
 static const uint16_t IMG_{0}_data[] = {{
 {3}
 }};
@@ -56,15 +56,12 @@ def process_bmp(file_path: str) -> str:
     pixel_chunks = chunk(pixels, size[0])
     data_list = []
 
-    print(pixels)
-    print(pixel_chunks)
-
     for px_chunk in pixel_chunks:
         chunks = []
 
-        print(px_chunk)
-
         for px in px_chunk:
+            rgb = ""
+
             rgb = rgb16(px[0], px[1], px[2])
 
             chunks.append(rgb)

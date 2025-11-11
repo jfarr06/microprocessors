@@ -1,3 +1,4 @@
+#include "sprites/dg_sprite.h"
 #include <io.h>
 #include <images.h>
 #include <sprites.h>
@@ -21,6 +22,7 @@ void SPRITE_FUNC(deco, step)(sprite* const self)
     static bool step;
 
     self->oldx = self->x, self->oldy = self->y;
+    self->old_horientation = self->horientation, self->old_vorientation = self->vorientation;
 
     bool hmoved = false, vmoved = false;
     int hdirection = 0, vdirection = 0;
@@ -73,7 +75,7 @@ void SPRITE_FUNC(deco, step)(sprite* const self)
         }
     }
 
-    if (spr_dg_get()->is_intersecting(spr_dg_get(), self))
+    if (is_intersecting(self, spr_dg_get()))
     {
         if (vmoved)
         {
@@ -117,7 +119,7 @@ sprite* SPRITE_FUNC(deco, create)()
     spr->init = SPRITE_FUNC(deco, init);
     spr->render = default_sprite_render;
     spr->step = SPRITE_FUNC(deco, step);
-    spr->is_intersecting = default_is_intersecting;
+    spr->has_transparency = true;
 
     return SPRITE(deco) = spr;
 }

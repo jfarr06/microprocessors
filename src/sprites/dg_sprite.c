@@ -27,7 +27,7 @@ sprite* SPRITE_FUNC(dg, create)()
     spr->init = SPRITE_FUNC(dg, init);
     spr->render = default_sprite_render;
     spr->step = SPRITE_FUNC(dg, step);
-    spr->is_intersecting = default_is_intersecting;
+    spr->has_transparency = false;
 
     return SPRITE(dg) = spr;
 }

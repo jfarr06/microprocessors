@@ -2,6 +2,7 @@
 #define DISPLAY_H_
 
 #include <stdint.h>
+#include <stdbool.h>
 
 #define SCREEN_W 128
 #define SCREEN_H 160
@@ -17,6 +18,9 @@ void init_display(void);
 void put_pixel(uint16_t x, uint16_t y, uint16_t colour);
 void put_image(uint16_t x, uint16_t y, uint16_t width, uint16_t height,
                const uint16_t *imageBuf, int hOrientation, int vOrientation);
+
+void put_image_fake_transparency(uint16_t x, uint16_t y, uint16_t width, uint16_t height,
+               const uint16_t *imageBuf, bool delete, int hOrientation, int vOrientation);
 
 void draw_line(uint16_t x0, uint16_t y0, uint16_t x1, uint16_t y1,
                uint16_t colour);

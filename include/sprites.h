@@ -9,7 +9,7 @@ void init_sprites();
 void sprites_step();
 
 void default_sprite_render(sprite* const self);
-bool default_is_intersecting(sprite* const self, sprite* const other);
+bool is_intersecting(sprite* const self, sprite* const other);
 
 #include <sprites/dg_sprite.h>
 #include <sprites/deco_sprite.h>
