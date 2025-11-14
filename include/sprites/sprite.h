@@ -10,15 +10,6 @@
 #define SPRITE_GET(x) sprite* SPRITE_FUNC(x, get)() { return SPRITE(x); }
 #define SET_SPRITE_IMG(sprite, img) do { \
     if ((sprite)->img_data != IMG_##img##_data) { \
-            if ((sprite)->img_data) { \
-                (sprite)->old_width = (sprite)->width; \
-                (sprite)->old_height = (sprite)->height; \
-                (sprite)->old_img_data = (sprite)->img_data; \
-            } else { \
-                (sprite)->old_width = IMG_##img##_width; \
-                (sprite)->old_height = IMG_##img##_height; \
-                (sprite)->old_img_data = IMG_##img##_data; \
-            } \
             (sprite)->width = IMG_##img##_width; \
             (sprite)->height = IMG_##img##_height; \
             (sprite)->img_data = IMG_##img##_data; \
@@ -33,18 +24,17 @@ typedef struct sprite sprite;
 
 struct sprite {
     uint16_t width, height, old_width, old_height;
-    const uint16_t* img_data, *old_img_data;
-    bool has_transparency;
+    const uint16_t* img_data;
     uint16_t x, y;
     int oldx, oldy;
-    uint16_t horientation, vorientation, old_horientation, old_vorientation;
+    uint16_t horientation, vorientation;
     uint8_t zindex;
     bool active;
 
     void (*init)(sprite* const self);
-    void (*finalize)(sprite* const self);
-    void (*render)(sprite* const self);
     void (*step)(sprite* const self);
 };
+
+extern uint32_t spr_frm;
 
 #endif

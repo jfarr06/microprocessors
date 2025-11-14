@@ -2,6 +2,8 @@
 #include <sprites.h>
 #include <sys/reent.h>
 
+uint32_t spr_frm = 0;
+
 #define SPRITE_ADD(i, x) s_sprites[i] = SPRITE_FUNC(x, create)();
 
 static void merge(sprite* arr[], int l, int mid, int r)
@@ -75,8 +77,7 @@ static sprite* s_sprites[NUM_SPRITES];
 
 void init_sprites()
 {
-    SPRITE_ADD(0, deco);
-    SPRITE_ADD(1, dg);
+    SPRITE_ADD(0, char);
 
     for (int i = 0; i < NUM_SPRITES; i++)
     {
@@ -101,32 +102,16 @@ void sprites_step()
     }
 }
 
-void default_sprite_render(sprite *const self)
+void render_sprite(sprite *const self)
 {
     if (self->oldx != -1 && self->oldy != -1) 
     {
         if (self->oldx == self->x && self->oldy == self->y) goto img;
 
-        if (self->has_transparency)
-        {
-            // set 1 frame to null then set old stuff to new stuff
-            put_image_fake_transparency(self->oldx, self->oldy, self->old_width, self->old_height, self->old_img_data, true, self->old_horientation, self->old_vorientation);
-
-            self->old_width = self->width;
-            self->old_height = self->height;
-            self->old_img_data = self->img_data;
-            self->old_horientation = self->horientation;
-            self->old_vorientation = self->vorientation;
-        }
-        else    
-            fill_rect(self->oldx, self->oldy, self->width, self->height, 0x0000);
+        fill_rect(self->oldx, self->oldy, self->width, self->height, 0x0000);
     }
 
-img:
-    if (self->has_transparency)
-        put_image_fake_transparency(self->x, self->y, self->width, self->height, self->img_data, false, self->horientation, self->vorientation);
-    else
-        put_image(self->x, self->y, self->width, self->height, self->img_data, self->horientation, self->vorientation);
+img: put_image(self->x, self->y, self->width, self->height, self->img_data, self->horientation, self->vorientation);
 }
 
 static bool point_is_intersecting(sprite* const self, uint16_t px, uint16_t py)
