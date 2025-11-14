@@ -1,10 +1,11 @@
+#include "sprites/sprite.h"
 #include <io.h>
 #include <images.h>
 #include <sprites.h>
 #include <display.h>
 
 #define CHAR_SPRITE_FRM_PROC_INT (15)
-#define CHAR_SPRITE_STEP_FACT    (3)
+#define CHAR_SPRITE_STEP_FACT    (4)
 
 SPRITE_DEF(char);
 SPRITE_GET(char);
@@ -21,21 +22,19 @@ void SPRITE_FUNC(char, init)(sprite* const self)
 
 void SPRITE_FUNC(char, step)(sprite* const self)
 {
-    static bool step;
-
     if (spr_frm % CHAR_SPRITE_FRM_PROC_INT == 0)
     {
+        bool step = spr_frm % (CHAR_SPRITE_FRM_PROC_INT * CHAR_SPRITE_STEP_FACT) == 0;
+
         self->oldx = self->x, self->oldy = self->y;
 
         bool hmoved = false, vmoved = false;
-        int hdirection = 0, vdirection = 0;
+        int vdirection = 0;
 
         if (button_right_pressed())
         {
             if (self->x < SCREEN_W-self->width)
             {
-                hdirection = 1;
-
                 self->x++;
                 hmoved = true;
                 self->vorientation = VERTICAL_ORIENTATION_DOWN;
@@ -82,7 +81,7 @@ void SPRITE_FUNC(char, step)(sprite* const self)
         {
             if (hmoved)
             {
-                if (step && spr_frm % (CHAR_SPRITE_FRM_PROC_INT * CHAR_SPRITE_STEP_FACT) == 0)
+                if (step)
                     SET_SPRITE_IMG(self, char_right_mov);
                 else
                     SET_SPRITE_IMG(self, char_right);
@@ -90,14 +89,12 @@ void SPRITE_FUNC(char, step)(sprite* const self)
             }
             else {
                 if (vdirection == 1)
-                    SET_SPRITE_IMG(self, char_front);
+                    if (step) SET_SPRITE_IMG(self, char_front_mov);
+                    else SET_SPRITE_IMG(self, char_front);
                 else
-                    SET_SPRITE_IMG(self, char_back);
+                    if (step) SET_SPRITE_IMG(self, char_back_mov);
+                    else SET_SPRITE_IMG(self, char_back);
             }
-
-            if (spr_frm % (CHAR_SPRITE_FRM_PROC_INT * CHAR_SPRITE_STEP_FACT) == 0)
-                step ^= 1;
-
         }
 
         render_sprite(self);
