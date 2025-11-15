@@ -4,7 +4,7 @@
 #include <sprites.h>
 #include <display.h>
 
-#define CHAR_SPRITE_FRM_PROC_INT (15)
+#define CHAR_SPRITE_FRM_PROC_INT (20)
 #define CHAR_SPRITE_STEP_FACT    (4)
 
 SPRITE_DEF(char);
@@ -55,7 +55,7 @@ void SPRITE_FUNC(char, step)(sprite* const self)
 
         if (button_down_pressed())
         {
-            if (self->y < SCREEN_H-self->height)
+            if (self->y < SCREEN_W-self->height)
             {
                 vdirection = 1;
 

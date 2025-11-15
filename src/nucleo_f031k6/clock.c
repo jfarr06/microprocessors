@@ -10,7 +10,7 @@ void init_systick()
     __asm(" cpsie i ");
 }
 
-static uint32_t st_millis = 0;
+uint32_t st_millis = 0;
 void SysTick_Handler(void)
 {
     st_millis++;   
@@ -20,8 +20,8 @@ void sys_delay(volatile uint32_t ms)
 {
     uint32_t end_time = ms + st_millis;
 
-	while(st_millis != end_time)
-		__asm(" wfi "); // sleep
+	  while(st_millis != end_time)
+	    __asm(" wfi "); // sleep
 }
 
 void init_pll() 

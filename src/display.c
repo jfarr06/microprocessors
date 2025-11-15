@@ -1,3 +1,5 @@
+#include <stdint.h>
+#include <string.h>
 #include <stm32f031x6.h>
 
 #include <nucleo_f031k6/common.h>
@@ -76,41 +78,7 @@ void put_image(uint16_t x, uint16_t y, uint16_t width, uint16_t height, const ui
    st7735s_bufw_end(); 
 }
 
-void put_image_fake_transparency(uint16_t x, uint16_t y, uint16_t width, uint16_t height, const uint16_t *imageBuf, bool delete, int hOrientation, int vOrientation)
-{
-    uint16_t ox = x, oy = y;
-
-    for (y = 0; y < height; y++)
-    {
-        uint32_t offsetY = 0;
-        if (vOrientation == 0)
-            offsetY = y * width;
-        else
-            offsetY = (height - (y + 1)) * width;
-
-        for (x = 0; x < width; x++)
-        {
-            uint32_t offsetX = 0;
-            if (hOrientation == 0)
-                offsetX = x;
-            else
-                offsetX = width - x - 1;
-
-            uint16_t colour = imageBuf[offsetY + offsetX];
-            if (colour)
-            {
-                if (delete)
-                    put_pixel(ox + x, oy + y, 0);
-                else
-                    put_pixel(ox + x, oy + y, colour);
-            }
-        }
-    }
-
-   st7735s_bufw_end(); 
-}
-
-void print_text(const char *text, const uint32_t len, uint8_t scale, uint16_t x, uint16_t y, uint16_t fgColour, uint16_t bgColour)
+void print_text(const char *text, uint32_t len, uint8_t scale, uint16_t x, uint16_t y, uint16_t fgColour, uint16_t bgColour)
 {
     if (scale <= 0) scale = 1;
 
@@ -121,7 +89,9 @@ void print_text(const char *text, const uint32_t len, uint8_t scale, uint16_t x,
         return;
     }
 
-    uint16_t textBox[FONT_WIDTH * scale + FONT_HEIGHT * scale];
+    if (len == 0) len = strlen(text);
+
+    uint16_t textBox[FONT_WIDTH * scale * FONT_HEIGHT * scale];
 
     for (int i = 0; i < len; i++)
     {
@@ -177,6 +147,101 @@ void print_centered_text(const char *text, const uint32_t len, uint8_t scale, in
     const uint16_t y = (SCREEN_H - FONT_HEIGHT*scale) / 2;
 
     print_text(text, len, scale, x + offsetX, y + offsetY, fgColour, bgColour);
+}
+
+void print_number(uint16_t number, uint8_t scale, uint16_t x, uint16_t y, uint16_t fgColour, uint16_t bgColour)
+{
+    char buf[6];
+    itoa(number, buf, 10);
+
+    print_text(buf, 0, scale, x, y, fgColour, bgColour);
+}
+
+void draw_line_low_slope(uint16_t x0, uint16_t y0, uint16_t x1, uint16_t y1, uint16_t colour)
+{
+    // Reference : https://en.wikipedia.org/wiki/Bresenham%27s_line_algorithm    
+    int dx = x1 - x0;
+    int dy = y1 - y0;
+    int yi = 1;
+  
+    if (dy < 0)
+    {
+        yi = -1;
+        dy = -dy;
+    }
+  
+    int d = 2*dy - dx;
+  
+    uint16_t y = y0;
+    for (uint16_t x=x0; x <= x1; x++)
+    {
+        put_pixel(x, y, colour);
+
+        if (d > 0)
+        {
+            y += yi;
+            d -= 2 * dx;
+        }
+
+        d += 2 * dy;
+    }
+}
+void draw_line_high_slope(uint16_t x0, uint16_t y0, uint16_t x1, uint16_t y1, uint16_t colour)
+{
+    // Reference : https://en.wikipedia.org/wiki/Bresenham%27s_line_algorithm    
+    int dx = x1 - x0;
+    int dy = y1 - y0;
+    int xi = 1;
+  
+    if (dy < 0)
+    {
+        xi = -1;
+        dx = -dx;
+    }
+  
+    int d = 2 * dx - dy;
+  
+    uint16_t x = x0;
+    for (uint16_t y = y0; y <= y1; y++)
+    {
+        put_pixel(x, y, colour);
+
+        if (d > 0)
+        {
+            x += xi;
+            d -= 2 * dy;
+        }
+
+        d += 2 * dx;
+    }
+}
+
+void draw_line(uint16_t x0, uint16_t y0, uint16_t x1, uint16_t y1, uint16_t colour)
+{
+	// Reference : https://en.wikipedia.org/wiki/Bresenham%27s_line_algorithm
+
+    if ( abs(y1 - y0) < abs(x1 - x0) )
+    {
+        if (x0 > x1)
+            draw_line_low_slope(x1, y1, x0, y0, colour);
+        else
+            draw_line_low_slope(x0, y0, x1, y1, colour);
+    }
+    else
+    {
+        if (y0 > y1) 
+            draw_line_high_slope(x1, y1, x0, y0, colour);
+        else
+            draw_line_high_slope(x0, y0, x1, y1, colour);
+    }
+}
+
+void draw_rect(uint16_t x, uint16_t y, uint16_t w, uint16_t h, uint16_t colour)
+{
+	draw_line(x, y, x + w, y, colour);
+    draw_line(x, y, x, y + h, colour);
+    draw_line(x + w, y, x + w, y + h, colour);
+    draw_line(x, y + h, x + w, y + h, colour);
 }
 
 void init_display()

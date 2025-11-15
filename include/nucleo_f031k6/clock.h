@@ -1,6 +1,13 @@
 #ifndef NUCLEO_F031K6_CLOCK_H_
 #define NUCLEO_F031K6_CLOCK_H_
 
+#include <stdint.h>
+
+/**
+ * The current millis systick value.
+ */
+extern uint32_t st_millis;
+
 /**
  * Enables SysTick
  */

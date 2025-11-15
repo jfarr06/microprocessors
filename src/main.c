@@ -12,8 +12,10 @@
 #include <notes.h>
 #include <debug.h>
 #include <images.h>
-#include <sprites.h>
 #include <display.h>
+
+#include <sprites.h>
+#include <infobox.h>
 
 #include <nucleo_f031k6/sound.h>
 #include <nucleo_f031k6/clock.h>
@@ -33,7 +35,9 @@ int main()
     init_sound();
     init_display();
     init_io();
+
     init_sprites();
+    init_infobox();
 
     DBG_INFO("Done initializing");
 
@@ -41,9 +45,10 @@ int main()
 
     uint16_t speed_factor = 50;
 
+    set_infobox_start_time(10);
+
     while (1)
     {
-
         if (false)
         {
             if (playing_sound)
@@ -64,7 +69,13 @@ int main()
             }
         }
 
+        if (button_enter_pressed())
+        {
+            set_infobox_coins(spr_frm);
+        }
+
         sprites_step();
+        step_infobox();
         
         sys_delay(1);
         spr_frm++;
