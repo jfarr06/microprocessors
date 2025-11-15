@@ -57,7 +57,12 @@ bool button_enter_pressed()
     return get_input_status(GPIOA, BUTTON_ENTER, PULLMODE_PULLUP);
 }
 
+bool any_movement_input()
+{
+    return button_left_pressed() || button_right_pressed() || button_up_pressed() || button_down_pressed();
+}
+
 bool any_input()
 {
-    return button_left_pressed() || button_right_pressed() || button_up_pressed() || button_down_pressed() || button_enter_pressed();
+    return any_movement_input() || button_enter_pressed();
 }

@@ -1,3 +1,5 @@
+#include <stddef.h>
+
 #include <rand.h>
 #include <nucleo_f031k6/adc.h>
 #include <nucleo_f031k6/common.h>
@@ -25,7 +27,7 @@ uint32_t prbs()
     return rand_seed & 0x7fffffff;
 }
 
-uint32_t rand(uint32_t lo, uint32_t hi)
+uint32_t sys_rand(uint32_t lo, uint32_t hi)
 {
     return (prbs() % (hi-lo)) + lo;
 }

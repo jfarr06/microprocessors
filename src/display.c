@@ -244,6 +244,49 @@ void draw_rect(uint16_t x, uint16_t y, uint16_t w, uint16_t h, uint16_t colour)
     draw_line(x, y + h, x + w, y + h, colour);
 }
 
+void fill_circle(uint16_t x0, uint16_t y0, uint16_t radius, uint16_t colour)
+{
+// Reference : https://en.wikipedia.org/wiki/Midpoint_circle_algorithm
+	// Similar to drawCircle but fills the circle with lines instead
+    uint16_t x = radius-1;
+    uint16_t y = 0;
+    int dx = 1;
+    int dy = 1;
+    int err = dx - (radius << 1);
+
+    if (radius > x0)
+        return; // don't draw even parially off-screen circles
+    if (radius > y0)
+        return; // don't draw even parially off-screen circles
+        
+    if ((x0+radius) > SCREEN_W)
+        return; // don't draw even parially off-screen circles
+    if ((y0+radius) > SCREEN_H)
+        return; // don't draw even parially off-screen circles    
+        
+    while (x >= y)
+    {
+        draw_line(x0 - x, y0 + y,x0 + x, y0 + y, colour);        
+        draw_line(x0 - y, y0 + x,x0 + y, y0 + x, colour);        
+        draw_line(x0 - x, y0 - y,x0 + x, y0 - y, colour);        
+        draw_line(x0 - y, y0 - x,x0 + y, y0 - x, colour);        
+
+        if (err <= 0)
+        {
+            y++;
+            err += dy;
+            dy += 2;
+        }
+        
+        if (err > 0)
+        {
+            x--;
+            dx += 2;
+            err += dx - (radius << 1);
+        }
+    }
+}
+
 void init_display()
 {
     DBG_INFO("Initializing display...");

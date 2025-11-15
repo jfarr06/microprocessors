@@ -3,6 +3,7 @@
 
 #include <stdint.h>
 #include <stdbool.h>
+#include <stddef.h>
 
 //=================== RANDOM
 
@@ -17,6 +18,6 @@ void init_rand();
  * @param lo The lower bound.
  * @param hi The higher bound.
  */ 
-uint32_t rand(uint32_t lo, uint32_t hi);
+uint32_t sys_rand(uint32_t lo, uint32_t hi);
 
 #endif

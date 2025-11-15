@@ -9,6 +9,8 @@ void init_sprites();
 void sprites_step();
 
 void render_sprite(sprite* const self);
+
+bool point_is_intersecting(sprite* const self, uint16_t px, uint16_t py);
 bool is_intersecting(sprite* const self, sprite* const other);
 
 #include <sprites/char_sprite.h>

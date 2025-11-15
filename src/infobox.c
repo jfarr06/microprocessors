@@ -19,7 +19,7 @@
 #define VALUE_POS_Y ((INFOBOX_BOUNDS_Y+INFOBOX_BOUNDS_H/2-FONT_HEIGHT/2)+2)
 
 bool did_change = false;
-int infobox_coins_count = 0, infobox_time = 0;
+int infobox_coins_count = 0, infobox_coins_target = 1, infobox_time = 0;
 
 int digit_count(int n)
 {
@@ -33,13 +33,18 @@ void render_infobox_data()
     {
         fill_rect(INFOBOX_BOUNDS_X+1, INFOBOX_BOUNDS_Y+FONT_HEIGHT+3, INFOBOX_BOUNDS_W-1, INFOBOX_BOUNDS_H-(FONT_HEIGHT+3)-1, 0x0000);
 
-        // titles first
+        int32_t coins_digits = digit_count(infobox_coins_count);
+        int32_t coins_seperator_placement = (((FONT_WIDTH * 2) + 2) * coins_digits) + 5;
+        int32_t coins_target_placement = (((FONT_WIDTH * 2) + 2) * (coins_digits + 1)) + 5;
+        uint16_t coins_colour = infobox_coins_count < infobox_coins_target ? rgb_to_word(0xff, 0x00, 0x00) : rgb_to_word(0x00, 0xff, 0x00);
 
-        int32_t digits = digit_count(infobox_time)+1;
-        int32_t placement = (((FONT_WIDTH * 2) + 2) * digits) + 5;
+        print_number(infobox_coins_count, 2, COINS_OFFSET_X, VALUE_POS_Y, coins_colour, 0x0000);
+        print_text("/", 1, 2, coins_seperator_placement, VALUE_POS_Y, 0xffff, 0x0000);
+        print_number(infobox_coins_target, 2, coins_target_placement, VALUE_POS_Y, rgb_to_word(0xff, 0xfb, 0x00), 0x0000);
 
-        print_number(infobox_coins_count, 2, COINS_OFFSET_X, VALUE_POS_Y, rgb_to_word(0xff, 0xfb, 0x00), 0x0000);
-        print_number(infobox_time, 2, INFOBOX_BOUNDS_W-placement, VALUE_POS_Y, 0xffff, 0x0000);
+        int32_t time_digits = digit_count(infobox_time)+1;
+        int32_t time_placement = (((FONT_WIDTH * 2) + 2) * time_digits) + 5;
+        print_number(infobox_time, 2, INFOBOX_BOUNDS_W-time_placement, VALUE_POS_Y, 0xffff, 0x0000);
         print_text("s", 1, 2, TIME_S_OFFSET_X, VALUE_POS_Y, 0xffff, 0x0000);
     
         did_change = false;
@@ -74,7 +79,7 @@ void step_infobox()
 
 void set_infobox_coins(int coins)
 {
-    infobox_coins_count = coins;
+    infobox_coins_target = coins;
 
     did_change = true;
 }
@@ -82,6 +87,13 @@ void set_infobox_coins(int coins)
 void set_infobox_start_time(int time)
 {
     infobox_time = time;
+
+    did_change = true;
+}
+
+void inc_infobox_coins()
+{
+    infobox_coins_count++;
 
     did_change = true;
 }

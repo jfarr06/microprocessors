@@ -1,8 +1,8 @@
-#include "sprites/sprite.h"
 #include <io.h>
 #include <images.h>
 #include <sprites.h>
 #include <display.h>
+#include <rooms.h>
 
 #define CHAR_SPRITE_FRM_PROC_INT (20)
 #define CHAR_SPRITE_STEP_FACT    (4)
@@ -16,64 +16,115 @@ void SPRITE_FUNC(char, init)(sprite* const self)
 
     self->active = true;
     self->zindex = 255; // Top of everything.
-    self->horientation = self->vorientation = false;
+    self->horientation = self->vorientation = 0;
     self->x = self->y = 50;
 }
 
 void SPRITE_FUNC(char, step)(sprite* const self)
 {
+    int anim_frm = 0;
+    static bool moving = false;
+    static int hdirection = 0, vdirection = 0, zdirection = 0;
+
     if (spr_frm % CHAR_SPRITE_FRM_PROC_INT == 0)
     {
         bool step = spr_frm % (CHAR_SPRITE_FRM_PROC_INT * CHAR_SPRITE_STEP_FACT) == 0;
 
+        if (step) anim_frm ^= 1;
+
         self->oldx = self->x, self->oldy = self->y;
 
         bool hmoved = false, vmoved = false;
-        int vdirection = 0;
 
         if (button_right_pressed())
         {
             if (self->x < SCREEN_W-self->width)
             {
+                zdirection = 0;
+                hdirection = 1;
+
                 self->x++;
                 hmoved = true;
                 self->vorientation = VERTICAL_ORIENTATION_DOWN;
                 self->horientation = HORIZONAL_ORIENTATION_LEFT;
-            }
-        }
 
-        if (button_left_pressed())
+                moving = true;
+            }
+        } else if (button_left_pressed())
         {
             if (self->x > 0)
             {
+                zdirection = 0;
+                hdirection = 0;
+
                 self->x--;
                 hmoved = true;
                 self->vorientation = VERTICAL_ORIENTATION_DOWN;
                 self->horientation = HORIZONAL_ORIENTATION_RIGHT;
-            }
-        }
 
-        if (button_down_pressed())
+                moving = true;
+            }
+        } else if (button_down_pressed())
         {
             if (self->y < SCREEN_W-self->height)
             {
                 vdirection = 1;
+                zdirection = 1;
 
                 self->y++;
                 vmoved = true;
-                self->horientation = HORIZONAL_ORIENTATION_LEFT;
+                self->horientation = anim_frm;
                 self->vorientation = VERTICAL_ORIENTATION_DOWN;
-            }
-        }
 
-        if (button_up_pressed())
+                moving = true;
+            }
+        } else if (button_up_pressed())
         {
             if (self->y > 0)
             {
+                vdirection = 0;
+                zdirection = 1;
+
                 self->y--;
                 vmoved = true;
-                self->horientation = HORIZONAL_ORIENTATION_LEFT;
+                self->horientation = anim_frm;
                 self->vorientation = VERTICAL_ORIENTATION_DOWN;
+
+                moving = true;
+            }
+        }
+
+        if (!any_movement_input() && moving)
+        {
+            if (zdirection)
+            {
+                if (vdirection) SET_SPRITE_IMG(self, char_front);
+                else SET_SPRITE_IMG(self, char_back);
+            }
+            else
+            {
+                SET_SPRITE_IMG(self, char_right);
+            }
+
+            moving = false;
+        }
+
+        if (colliding_with_walls())
+        {
+            if (vmoved)
+            {
+                if (vdirection) self->y--;
+                else self->y++;
+
+                vmoved = false;
+            }
+
+            if (hmoved)
+            {
+                if (hdirection) self->x--;
+                else self->x++;
+
+                hmoved = false;
             }
         }
 
@@ -81,19 +132,14 @@ void SPRITE_FUNC(char, step)(sprite* const self)
         {
             if (hmoved)
             {
-                if (step)
-                    SET_SPRITE_IMG(self, char_right_mov);
-                else
-                    SET_SPRITE_IMG(self, char_right);
-
+                if (anim_frm) SET_SPRITE_IMG(self, char_right_mov);
+                else SET_SPRITE_IMG(self, char_right);
             }
             else {
                 if (vdirection == 1)
-                    if (step) SET_SPRITE_IMG(self, char_front_mov);
-                    else SET_SPRITE_IMG(self, char_front);
+                    SET_SPRITE_IMG(self, char_front_mov);
                 else
-                    if (step) SET_SPRITE_IMG(self, char_back_mov);
-                    else SET_SPRITE_IMG(self, char_back);
+                    SET_SPRITE_IMG(self, char_back_mov);
             }
         }
 

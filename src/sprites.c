@@ -114,7 +114,7 @@ void render_sprite(sprite *const self)
 img: put_image(self->x, self->y, self->width, self->height, self->img_data, self->horientation, self->vorientation);
 }
 
-static bool point_is_intersecting(sprite* const self, uint16_t px, uint16_t py)
+bool point_is_intersecting(sprite* const self, uint16_t px, uint16_t py)
 {
     uint16_t x1 = self->x, 
              y1 = self->y, 
