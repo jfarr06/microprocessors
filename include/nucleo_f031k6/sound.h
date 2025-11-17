@@ -6,13 +6,13 @@
 /**
  * Initializes sound.
  */
-void init_sound();
+void init_nucleo_f031k6_sound(void);
 
 /**
  * Plays a tone at the specified frequency
  *
  * @param frequency The frequency.
  */
-void play_sound(uint32_t frequency);
+void play_nucleo_f031k6_sound(uint32_t frequency);
 
 #endif

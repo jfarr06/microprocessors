@@ -16,7 +16,7 @@
  * @param bit The specific pin of the GPIO port to set the mode for.
  * @param mode The mode to choose.
  */
-void pin_mode(GPIO_TypeDef* port, uint32_t bit, uint32_t mode);
+void set_nucleo_f031k6_pin_mode(GPIO_TypeDef* port, uint8_t bit, uint32_t mode);
 
 /**
  * Enables the pull mode for the specific pin on the GPIO port.
@@ -25,7 +25,7 @@ void pin_mode(GPIO_TypeDef* port, uint32_t bit, uint32_t mode);
  * @param bit The GPIO port pin.
  * @param mode The specific mode for the pull resistor
  */
-void pull_mode(GPIO_TypeDef* port, uint32_t bit, uint32_t mode);
+void set_nucleo_f031k6_pull_mode(GPIO_TypeDef* port, uint8_t bit, uint32_t mode);
 
 /**
  * Toggles the value of specified bit in the specified IO register
@@ -34,7 +34,7 @@ void pull_mode(GPIO_TypeDef* port, uint32_t bit, uint32_t mode);
  * @param bit The specific pin on the GPIO port.
  * @param status Either 1 or 0.
  */
-void toggle_odr_bit(GPIO_TypeDef* port, uint32_t bit, bool status);
+void toggle_nucleo_f031k6_odr_bit(GPIO_TypeDef* port, uint32_t bit, bool status);
 
 /**
  * Gets the status of an IDR register for the specified GPIO port.
@@ -42,11 +42,11 @@ void toggle_odr_bit(GPIO_TypeDef* port, uint32_t bit, bool status);
  * @param port The specific GPIO port.
  * @param bit The specific pin on the GPIO port.
  */
-bool get_input_status(GPIO_TypeDef* port, uint32_t bit, uint8_t mode);
+bool get_nucleo_f031k6_idr_bit(GPIO_TypeDef* port, uint32_t bit, uint8_t mode);
 
 /**
  * Delay for the specified amount of milliseconds.
  */
-void sys_delay(volatile uint32_t ms);
+void nucleo_f031k6_delay(volatile uint16_t ms);
 
 #endif

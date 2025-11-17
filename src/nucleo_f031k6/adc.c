@@ -1,7 +1,7 @@
 #include <nucleo_f031k6/adc.h>
 #include <nucleo_f031k6/common.h>
 
-void init_adc()
+void init_nucleo_f031k6_adc(void)
 {
     RCC->APB2ENR |= RCC_APB2ENR_ADCEN;
     ADC->CCR |= ADC_CCR_VLCDEN; // Ref volt
@@ -12,7 +12,7 @@ void init_adc()
     ADC1->CR |= ADC_CR_ADEN;
 }
 
-uint32_t read_adc()
+uint32_t read_nucleo_f031k6_adc(void)
 {
     ADC1->CR |= ADC_CR_ADSTART;
     while (ADC1->CR & ADC_CR_ADSTART); // Wait for end

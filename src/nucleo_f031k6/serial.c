@@ -32,12 +32,12 @@
 const uint32_t USART_CLOCK_SPEED = 48000000; // 48MHz
 const uint32_t USART_BAUD_RATE = 9600;
 
-void init_serial() 
+void init_nucleo_f031k6_serial(void) 
 {
     RCC->APB2ENR |= RCC_APB2ENR_USART1EN; // Turn on USART1
 
-    pin_mode(USART_TX_PORT, USART_TX_PIN, PINMODE_ALTERNATE); // enable alternative function (UART tx)
-    pin_mode(USART_RX_PORT, USART_RX_PIN, PINMODE_ALTERNATE); // enable alternative function (UART rx)
+    set_nucleo_f031k6_pin_mode(USART_TX_PORT, USART_TX_PIN, PINMODE_ALTERNATE); // enable alternative function (UART tx)
+    set_nucleo_f031k6_pin_mode(USART_RX_PORT, USART_RX_PIN, PINMODE_ALTERNATE); // enable alternative function (UART rx)
 
     // Select UART2 for ports
     volatile uint32_t *afrTx = &USART_TX_PORT->AFR[USART_TX_AFR];
@@ -60,7 +60,7 @@ void init_serial()
     USART1->CR1 |= USART_CR1_UE;
 }
 
-void s_putc(char c)
+void nucleo_f031k6_putc(char c)
 {
     while (!(USART1->ISR & USART_ISR_TC)); // Wait for transmission to finish.
 
@@ -68,16 +68,16 @@ void s_putc(char c)
     USART1->TDR = c; // Transmit byte
 }
 
-void s_puts(char *str)
+void nucleo_f031k6_puts(char *str)
 {
     while (*str) {
-        s_putc(*str);
+        nucleo_f031k6_putc(*str);
 
         str++;
     }
 }
 
-size_t s_printf(const char *format, ...)
+size_t nucleo_f031k6_printf(const char *format, ...)
 {
     va_list args;
     va_start(args, format);
@@ -91,7 +91,7 @@ size_t s_printf(const char *format, ...)
 
     va_end(args);
 
-    s_puts(buf);
+    nucleo_f031k6_puts(buf);
     free(buf);
 
     return len - 1;

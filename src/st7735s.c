@@ -55,8 +55,8 @@ void init_spi()
     RCC->APB2ENR |= RCC_APB2ENR_SPI1EN; // Enable SPI
 
     // Pins 5 & 7 for SPI1.
-    pin_mode(GPIOA, SPI1_SCK_PINOUT, PINMODE_ALTERNATE);
-    pin_mode(GPIOA, SPI1_MOSI_PINOUT, PINMODE_ALTERNATE);
+    set_nucleo_f031k6_pin_mode(GPIOA, SPI1_SCK_PINOUT, PINMODE_ALTERNATE);
+    set_nucleo_f031k6_pin_mode(GPIOA, SPI1_MOSI_PINOUT, PINMODE_ALTERNATE);
     GPIOA->AFR[0] &= 0x0f0fffff; // AF0 on AFSEL7 and AFSEL5
 
     uint32_t _dummy_sr = SPI1->SR; // Dummy read.
@@ -89,7 +89,7 @@ void rst_lo()
 
     DBG_TRACE("Set RST low");
 
-    toggle_odr_bit(GPIOA, RST, false);
+    toggle_nucleo_f031k6_odr_bit(GPIOA, RST, false);
 }
 
 void rst_hi()
@@ -99,7 +99,7 @@ void rst_hi()
 
     DBG_TRACE("Set RST high");    
 
-    toggle_odr_bit(GPIOA, RST, true);
+    toggle_nucleo_f031k6_odr_bit(GPIOA, RST, true);
 }
 
 //====== CS
@@ -111,7 +111,7 @@ void cs_lo()
     
     DBG_TRACE("Set CS low");    
  
-    toggle_odr_bit(GPIOA, CS, false);
+    toggle_nucleo_f031k6_odr_bit(GPIOA, CS, false);
 }
 
 void cs_hi()
@@ -121,7 +121,7 @@ void cs_hi()
 
     DBG_TRACE("Set CS high");    
  
-    toggle_odr_bit(GPIOA, CS, true);
+    toggle_nucleo_f031k6_odr_bit(GPIOA, CS, true);
 }
 
 //======= DC
@@ -133,7 +133,7 @@ void dc_lo()
  
     DBG_TRACE("Set D/C low");    
  
-    toggle_odr_bit(GPIOA, DC, false);
+    toggle_nucleo_f031k6_odr_bit(GPIOA, DC, false);
 }
 
 void dc_hi()
@@ -143,7 +143,7 @@ void dc_hi()
 
     DBG_TRACE("Set D/C high");    
 
-    toggle_odr_bit(GPIOA, DC, true);
+    toggle_nucleo_f031k6_odr_bit(GPIOA, DC, true);
 }
 
 void st7735s_bufw8(uint8_t data, size_t n)
@@ -193,23 +193,23 @@ void st7735s_rstcycl()
 
     cs_hi();
     rst_lo();
-    sys_delay(100); // Delay 100ms
+    nucleo_f031k6_delay(100); // Delay 100ms
     rst_hi();
-    sys_delay(100);
+    nucleo_f031k6_delay(100);
 }
 
 void st7735s_swreset()
 {
     st7735s_cmd(ST7735S_CMD_SWRESET, NULL, 0);
 
-    sys_delay(120); // Wait for 120ms -- according to spec.
+    nucleo_f031k6_delay(120); // Wait for 120ms -- according to spec.
 }
 
 void st7735s_slpout()
 {
     st7735s_cmd(ST7735S_CMD_SLPOUT, NULL, 0);
 
-    sys_delay(120); // Wait for 120ms -- according to spec
+    nucleo_f031k6_delay(120); // Wait for 120ms -- according to spec
 }
 
 void st7735s_frmctr1(uint8_t rtna, uint8_t fpa, uint8_t bpa)
@@ -276,7 +276,7 @@ void st7735s_dispon()
 {
     st7735s_cmd(ST7735S_CMD_DISPON, NULL, 0);
 
-    sys_delay(120); // Wait for 120ms -- according to spec.
+    nucleo_f031k6_delay(120); // Wait for 120ms -- according to spec.
 }
 
 void st7735s_ramwr()
@@ -321,9 +321,9 @@ void init_st7735s()
     DBG_INFO("Initializing ST7735S, PA3 = RST, PA4 = CS, PA6 = D/C...");
 
     RCC->AHBENR |= RCC_AHBENR_GPIOAEN;
-    pin_mode(GPIOA, RST_PINOUT, PINMODE_OUTPUT); // PA3 = Reset
-    pin_mode(GPIOA, CS_PINOUT, PINMODE_OUTPUT);  // PA4 = Chip Select
-    pin_mode(GPIOA, DC_PINOUT, PINMODE_OUTPUT);  // PA6 = Data/Command
+    set_nucleo_f031k6_pin_mode(GPIOA, RST_PINOUT, PINMODE_OUTPUT); // PA3 = Reset
+    set_nucleo_f031k6_pin_mode(GPIOA, CS_PINOUT, PINMODE_OUTPUT);  // PA4 = Chip Select
+    set_nucleo_f031k6_pin_mode(GPIOA, DC_PINOUT, PINMODE_OUTPUT);  // PA6 = Data/Command
 
     init_spi();
 

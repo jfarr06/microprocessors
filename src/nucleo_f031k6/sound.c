@@ -10,11 +10,11 @@
 #define SOUND_PRESCALER_CLKFREQ (0x10000UL)  // 65kHz
 #define SOUND_PRESCALER         (SOUND_PRESCALER_BASFREQ / SOUND_PRESCALER_CLKFREQ)
 
-void init_sound()
+void init_nucleo_f031k6_sound(void)
 {
     DBG_INFO("Initializing sound on PB1, base_freq = %p, clk_freq = %p", SOUND_PRESCALER_BASFREQ, SOUND_PRESCALER_CLKFREQ);
 
-    pin_mode(SOUND_PORT, SOUND_PINOUT, PINMODE_ALTERNATE); // select alternative function for PB1
+    set_nucleo_f031k6_pin_mode(SOUND_PORT, SOUND_PINOUT, PINMODE_ALTERNATE); // select alternative function for PB1
 
     SOUND_PORT->AFR[0] &= ~(0b1111 << 4); // T14_CH1 = AF0
     
@@ -29,7 +29,7 @@ void init_sound()
 	TIM14->CNT = 0;
 }
 
-void play_sound(uint32_t frequency)
+void play_nucleo_f031k6_sound(uint32_t frequency)
 {
     if (frequency == 0) TIM14->CR1 &= ~TIM_CR1_CEN; // disable the counter
 

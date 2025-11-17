@@ -2,15 +2,13 @@
 #define RAND_H_
 
 #include <stdint.h>
-#include <stdbool.h>
-#include <stddef.h>
 
 //=================== RANDOM
 
 /**
  * Initializes the pseudo random number generator.
  */
-void init_rand();
+void init_rand(void);
 
 /**
  * Generates a psuedo random number between hi and lo.

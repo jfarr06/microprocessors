@@ -3,11 +3,23 @@
 
 #include <nucleo_f031k6/common.h>
 
-#define BUTTON_RIGHT GPIO_IDR_4
-#define BUTTON_LEFT  GPIO_IDR_5
-#define BUTTON_UP    GPIO_IDR_8
-#define BUTTON_DOWN  GPIO_IDR_11
-#define BUTTON_ENTER GPIO_IDR_0
+#define STATUS(button) (get_nucleo_f031k6_idr_bit(BUTTON_##button##_PORT, BUTTON_##button##_BIT, PULLMODE_PULLUP) << BUTTON_##button##_Pos)
+#define INPUT(button) do { \
+        set_nucleo_f031k6_pin_mode(BUTTON_##button##_PORT, BUTTON_##button##_PINOUT, PINMODE_INPUT); \
+        set_nucleo_f031k6_pull_mode(BUTTON_##button##_PORT, BUTTON_##button##_PINOUT, PULLMODE_PULLUP); \
+    } while(0)
+
+#define BUTTON_RIGHT_PORT GPIOB
+#define BUTTON_LEFT_PORT  GPIOB
+#define BUTTON_UP_PORT    GPIOA
+#define BUTTON_DOWN_PORT  GPIOA
+#define BUTTON_ENTER_PORT GPIOA
+
+#define BUTTON_RIGHT_BIT GPIO_IDR_4
+#define BUTTON_LEFT_BIT  GPIO_IDR_5
+#define BUTTON_UP_BIT    GPIO_IDR_8
+#define BUTTON_DOWN_BIT  GPIO_IDR_11
+#define BUTTON_ENTER_BIT GPIO_IDR_0
 
 #define BUTTON_RIGHT_PINOUT GPIO_MODER_MODER4_Pos
 #define BUTTON_LEFT_PINOUT  GPIO_MODER_MODER5_Pos
@@ -15,54 +27,40 @@
 #define BUTTON_DOWN_PINOUT  GPIO_MODER_MODER11_Pos
 #define BUTTON_ENTER_PINOUT GPIO_MODER_MODER0_Pos
 
+uint8_t current_held = 0b00000;
+
 void init_io()
 {
     DBG_INFO("Initializing inputs...");
 
-    pin_mode(GPIOB, BUTTON_RIGHT_PINOUT, PINMODE_INPUT);
-    pin_mode(GPIOB, BUTTON_LEFT_PINOUT, PINMODE_INPUT);
-    pin_mode(GPIOA, BUTTON_UP_PINOUT, PINMODE_INPUT);
-    pin_mode(GPIOA, BUTTON_DOWN_PINOUT, PINMODE_INPUT);
-    pin_mode(GPIOA, BUTTON_ENTER_PINOUT, PINMODE_INPUT);
-
-    pull_mode(GPIOB, BUTTON_RIGHT_PINOUT, PULLMODE_PULLUP);
-    pull_mode(GPIOB, BUTTON_LEFT_PINOUT, PULLMODE_PULLUP);
-    pull_mode(GPIOA, BUTTON_UP_PINOUT, PULLMODE_PULLUP);
-    pull_mode(GPIOA, BUTTON_DOWN_PINOUT, PULLMODE_PULLUP);
-    pull_mode(GPIOA, BUTTON_ENTER_PINOUT, PULLMODE_PULLUP);
+    INPUT(ENTER);
+    INPUT(RIGHT);
+    INPUT(LEFT);
+    INPUT(UP);
+    INPUT(DOWN);
 }
 
-bool button_right_pressed()
+bool read_latest_input(input_status* status)
 {
-    return get_input_status(GPIOB, BUTTON_RIGHT, PULLMODE_PULLUP);
+    uint8_t held = STATUS(ENTER) | 
+                   STATUS(RIGHT) | 
+                   STATUS(LEFT)  | 
+                   STATUS(UP)    | 
+                   STATUS(DOWN);
+
+    status->held = held;
+    status->trigger = ~current_held & held;
+    status->release = current_held & ~held;
+
+    current_held = held;
+
+    return status != 0;
 }
 
-bool button_left_pressed()
+bool any_movement_input(const input_status* const status)
 {
-    return get_input_status(GPIOB, BUTTON_LEFT, PULLMODE_PULLUP);
-}
-
-bool button_up_pressed()
-{
-    return get_input_status(GPIOA, BUTTON_UP, PULLMODE_PULLUP);
-}
-
-bool button_down_pressed()
-{
-    return get_input_status(GPIOA, BUTTON_DOWN, PULLMODE_PULLUP);
-}
-
-bool button_enter_pressed()
-{
-    return get_input_status(GPIOA, BUTTON_ENTER, PULLMODE_PULLUP);
-}
-
-bool any_movement_input()
-{
-    return button_left_pressed() || button_right_pressed() || button_up_pressed() || button_down_pressed();
-}
-
-bool any_input()
-{
-    return any_movement_input() || button_enter_pressed();
+    return ((status->held & BUTTON_RIGHT) | 
+            (status->held & BUTTON_LEFT)  | 
+            (status->held & BUTTON_UP)    | 
+            (status->held & BUTTON_DOWN)) != 0;
 }

@@ -6,21 +6,21 @@
 /**
  * Initializes serial communication.
  */
-void init_serial();
+void init_nucleo_f031k6_serial(void);
 
 /**
  * Writes a character to the serial output.
  *
  * @param c The character.
  */
-void s_putc(char c);
+void nucleo_f031k6_putc(char c);
 
 /**
  * Writes n amount of bytes to the serial output.
  *
  * @param str The string
  */
-void s_puts(char* str);
+void nucleo_f031k6_puts(char* str);
 
 /**
  * Writes a formatted output to the serial port.
@@ -28,6 +28,6 @@ void s_puts(char* str);
  * @param format The format string.
  * @param ... The varags
  */
-size_t s_printf(const char* format, ...);
+size_t nucleo_f031k6_printf(const char* format, ...);
 
 #endif

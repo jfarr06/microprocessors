@@ -9,20 +9,9 @@
 #include <st7735s.h>
 #include <display.h>
 
-uint16_t rgb_to_word(uint16_t r, uint16_t g, uint16_t b)
-{
-	uint16_t rvalue = 0;
-    rvalue += g >> 5;
-    rvalue += (g & (7)) << 13;
-    rvalue += (r >> 3) << 8;
-    rvalue += (b >> 3) << 3;
-    
-    return rvalue;
-}
-
 //================================ DRAWING
 
-void open_aperture(uint16_t x1, uint16_t y1, uint16_t x2, uint16_t y2)
+void open_aperture(uint8_t x1, uint8_t y1, uint8_t x2, uint8_t y2)
 {
     DBG_TRACE("Opening aperture x1 = %d, y1 = %d, x2 = %d, y2 = %d", x1, y1, x2, y2);
 
@@ -30,7 +19,7 @@ void open_aperture(uint16_t x1, uint16_t y1, uint16_t x2, uint16_t y2)
     st7735s_raset(y1, y2);
 }
 
-void fill_rect(uint16_t x, uint16_t y, uint16_t width, uint16_t height, uint16_t colour)
+void fill_rect(uint8_t x, uint8_t y, uint8_t width, uint8_t height, uint16_t colour)
 {
     uint32_t px = height * width;
     open_aperture(x, y, x + width - 1, y + height - 1);
@@ -40,7 +29,7 @@ void fill_rect(uint16_t x, uint16_t y, uint16_t width, uint16_t height, uint16_t
     st7735s_bufw_end();
 }
 
-void put_pixel(uint16_t x, uint16_t y, uint16_t colour)
+void put_pixel(uint8_t x, uint8_t y, uint16_t colour)
 {
     open_aperture(x, y, x + 1, y + 1);
     
@@ -49,7 +38,7 @@ void put_pixel(uint16_t x, uint16_t y, uint16_t colour)
     st7735s_bufw_end();
 }
 
-void put_image(uint16_t x, uint16_t y, uint16_t width, uint16_t height, const uint16_t *imageBuf, int hOrientation, int vOrientation)
+void put_image(uint8_t x, uint8_t y, uint8_t width, uint8_t height, const uint16_t *imageBuf, uint8_t hOrientation, uint8_t vOrientation)
 {
     open_aperture(x, y, x + width - 1, y + height - 1);
     st7735s_ramwr();
@@ -78,7 +67,17 @@ void put_image(uint16_t x, uint16_t y, uint16_t width, uint16_t height, const ui
    st7735s_bufw_end(); 
 }
 
-void print_text(const char *text, uint32_t len, uint8_t scale, uint16_t x, uint16_t y, uint16_t fgColour, uint16_t bgColour)
+static inline uint8_t strlen_custom(const char* s)
+{
+    uint8_t c = 0;
+
+    while (*(s++))
+        c++;
+
+    return c;
+}
+
+void print_text(const char *text, uint8_t len, uint8_t scale, uint8_t x, uint8_t y, uint16_t fgColour, uint16_t bgColour)
 {
     if (scale <= 0) scale = 1;
 
@@ -89,11 +88,11 @@ void print_text(const char *text, uint32_t len, uint8_t scale, uint16_t x, uint1
         return;
     }
 
-    if (len == 0) len = strlen(text);
+    if (len == 0) len = strlen_custom(text);
 
     uint16_t textBox[FONT_WIDTH * scale * FONT_HEIGHT * scale];
 
-    for (int i = 0; i < len; i++)
+    for (uint8_t i = 0; i < len; i++)
     {
         DBG_TRACE("Writing character %c", text[i]);
 
@@ -139,17 +138,7 @@ void print_text(const char *text, uint32_t len, uint8_t scale, uint16_t x, uint1
     }
 }
 
-void print_centered_text(const char *text, const uint32_t len, uint8_t scale, int16_t offsetX, int16_t offsetY, uint16_t fgColour, uint16_t bgColour)
-{
-    const size_t textSizePixels = len * FONT_WIDTH * scale;
-
-    uint16_t x = (SCREEN_W - textSizePixels) / 2;
-    const uint16_t y = (SCREEN_H - FONT_HEIGHT*scale) / 2;
-
-    print_text(text, len, scale, x + offsetX, y + offsetY, fgColour, bgColour);
-}
-
-void print_number(uint16_t number, uint8_t scale, uint16_t x, uint16_t y, uint16_t fgColour, uint16_t bgColour)
+void print_number(uint16_t number, uint8_t scale, uint8_t x, uint8_t y, uint16_t fgColour, uint16_t bgColour)
 {
     char buf[6];
     itoa(number, buf, 10);
@@ -157,12 +146,12 @@ void print_number(uint16_t number, uint8_t scale, uint16_t x, uint16_t y, uint16
     print_text(buf, 0, scale, x, y, fgColour, bgColour);
 }
 
-void draw_line_low_slope(uint16_t x0, uint16_t y0, uint16_t x1, uint16_t y1, uint16_t colour)
+void draw_line_low_slope(uint8_t x0, uint8_t y0, uint8_t x1, uint8_t y1, uint16_t colour)
 {
     // Reference : https://en.wikipedia.org/wiki/Bresenham%27s_line_algorithm    
-    int dx = x1 - x0;
-    int dy = y1 - y0;
-    int yi = 1;
+    uint8_t dx = x1 - x0;
+    int16_t dy = y1 - y0;
+    int16_t yi = 1;
   
     if (dy < 0)
     {
@@ -170,10 +159,10 @@ void draw_line_low_slope(uint16_t x0, uint16_t y0, uint16_t x1, uint16_t y1, uin
         dy = -dy;
     }
   
-    int d = 2*dy - dx;
+    int16_t d = 2*dy - dx;
   
-    uint16_t y = y0;
-    for (uint16_t x=x0; x <= x1; x++)
+    uint8_t y = y0;
+    for (uint8_t x=x0; x <= x1; x++)
     {
         put_pixel(x, y, colour);
 
@@ -186,12 +175,12 @@ void draw_line_low_slope(uint16_t x0, uint16_t y0, uint16_t x1, uint16_t y1, uin
         d += 2 * dy;
     }
 }
-void draw_line_high_slope(uint16_t x0, uint16_t y0, uint16_t x1, uint16_t y1, uint16_t colour)
+void draw_line_high_slope(uint8_t x0, uint8_t y0, uint8_t x1, uint8_t y1, uint16_t colour)
 {
     // Reference : https://en.wikipedia.org/wiki/Bresenham%27s_line_algorithm    
-    int dx = x1 - x0;
-    int dy = y1 - y0;
-    int xi = 1;
+    int16_t dx = x1 - x0;
+    uint8_t dy = y1 - y0;
+    int16_t xi = 1;
   
     if (dy < 0)
     {
@@ -199,10 +188,10 @@ void draw_line_high_slope(uint16_t x0, uint16_t y0, uint16_t x1, uint16_t y1, ui
         dx = -dx;
     }
   
-    int d = 2 * dx - dy;
+    int16_t d = 2 * dx - dy;
   
-    uint16_t x = x0;
-    for (uint16_t y = y0; y <= y1; y++)
+    uint8_t x = x0;
+    for (uint8_t y = y0; y <= y1; y++)
     {
         put_pixel(x, y, colour);
 
@@ -216,7 +205,7 @@ void draw_line_high_slope(uint16_t x0, uint16_t y0, uint16_t x1, uint16_t y1, ui
     }
 }
 
-void draw_line(uint16_t x0, uint16_t y0, uint16_t x1, uint16_t y1, uint16_t colour)
+void draw_line(uint8_t x0, uint8_t y0, uint8_t x1, uint8_t y1, uint16_t colour)
 {
 	// Reference : https://en.wikipedia.org/wiki/Bresenham%27s_line_algorithm
 
@@ -236,7 +225,7 @@ void draw_line(uint16_t x0, uint16_t y0, uint16_t x1, uint16_t y1, uint16_t colo
     }
 }
 
-void draw_rect(uint16_t x, uint16_t y, uint16_t w, uint16_t h, uint16_t colour)
+void draw_rect(uint8_t x, uint8_t y, uint8_t w, uint8_t h, uint16_t colour)
 {
 	draw_line(x, y, x + w, y, colour);
     draw_line(x, y, x, y + h, colour);
@@ -244,15 +233,15 @@ void draw_rect(uint16_t x, uint16_t y, uint16_t w, uint16_t h, uint16_t colour)
     draw_line(x, y + h, x + w, y + h, colour);
 }
 
-void fill_circle(uint16_t x0, uint16_t y0, uint16_t radius, uint16_t colour)
+void fill_circle(uint8_t x0, uint8_t y0, uint8_t radius, uint16_t colour)
 {
 // Reference : https://en.wikipedia.org/wiki/Midpoint_circle_algorithm
 	// Similar to drawCircle but fills the circle with lines instead
-    uint16_t x = radius-1;
-    uint16_t y = 0;
-    int dx = 1;
-    int dy = 1;
-    int err = dx - (radius << 1);
+    uint8_t x = radius-1;
+    uint8_t y = 0;
+    uint8_t dx = 1;
+    uint8_t dy = 1;
+    int16_t err = dx - (radius << 1);
 
     if (radius > x0)
         return; // don't draw even parially off-screen circles

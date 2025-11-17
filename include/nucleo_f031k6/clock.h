@@ -6,21 +6,21 @@
 /**
  * The current millis systick value.
  */
-extern uint32_t st_millis;
+extern uint16_t s_nucleo_f031k6_millis;
 
 /**
  * Enables SysTick
  */
-void init_systick();
+void init_nucleo_f031k6_systick(void);
 
 /**
  * Initializes PLL clock, and sets it as current clock.
  */
-void init_pll();
+void init_nucleo_f031k6_pll(void);
 
 /**
  * Disable PLL clock, enable HSI16 and set current clock.
  */
-void init_hsi16();
+void init_nucleo_f031k6_hsi16(void);
 
 #endif

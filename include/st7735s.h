@@ -87,7 +87,7 @@
 /**
  * Initializes the SPI for the ST7735S v1.1 display driver.
  */
-void init_st7735s();
+void init_st7735s(void);
 
 /**
  * Buffer out n amount of data to SPI port.
@@ -108,22 +108,22 @@ void st7735s_bufw16(uint16_t data, size_t n);
 /**
  * Cleans up after the bufw write.
  */
-void st7735s_bufw_end();
+void st7735s_bufw_end(void);
 
 /**
  * Run a reset pin cycle with ST7735S RST pin.
  */
-void st7735s_rstcycl();
+void st7735s_rstcycl(void);
 
 /**
  * Sends a SWRESET command.
  */
-void st7735s_swreset();
+void st7735s_swreset(void);
 
 /**
  * Sends a SLPOUT command.
  */
-void st7735s_slpout();
+void st7735s_slpout(void);
 
 /**
  * Sends a FRMCTR1 command
@@ -179,13 +179,13 @@ void st7735s_colmod(uint8_t ifpf);
 /**
  * Sends a DISPON command.
  */
-void st7735s_dispon();
+void st7735s_dispon(void);
 
 /**
  * Sends a RAMWR command.
  * Please note you will have to buffer after this.
  */
-void st7735s_ramwr();
+void st7735s_ramwr(void);
 
 /**
  * Sends a CASET command.

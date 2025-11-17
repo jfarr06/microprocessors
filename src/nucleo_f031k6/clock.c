@@ -1,7 +1,7 @@
 #include <nucleo_f031k6/clock.h>
 #include <nucleo_f031k6/common.h>
 
-void init_systick()
+void init_nucleo_f031k6_systick(void)
 {
     SysTick->LOAD = 48000;
     SysTick->CTRL = 0x7;
@@ -10,21 +10,21 @@ void init_systick()
     __asm(" cpsie i ");
 }
 
-uint32_t st_millis = 0;
+uint16_t s_nucleo_f031k6_millis = 0;
 void SysTick_Handler(void)
 {
-    st_millis++;   
+    s_nucleo_f031k6_millis++;   
 }
 
-void sys_delay(volatile uint32_t ms)
+void nucleo_f031k6_delay(volatile uint16_t ms)
 {
-    uint32_t end_time = ms + st_millis;
+    uint16_t end_time = ms + s_nucleo_f031k6_millis;
 
-	  while(st_millis != end_time)
+	  while(s_nucleo_f031k6_millis != end_time)
 	    __asm(" wfi "); // sleep
 }
 
-void init_pll() 
+void init_nucleo_f031k6_pll(void) 
 {
   // This is potentially a dangerous function as it could
   // result in a system with an invalid clock signal - result: a stuck system
@@ -54,7 +54,7 @@ void init_pll()
   RCC->CFGR |= RCC_CFGR_SW_PLL;
 }
 
-void init_hsi16() 
+void init_nucleo_f031k6_hsi16(void) 
 {
   RCC->CR &= ~RCC_CR_PLLON;
   RCC->CR |= RCC_CR_HSION;

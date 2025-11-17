@@ -7,9 +7,11 @@
 static uint32_t rand_seed = 0;
 void init_rand()
 {
+    init_nucleo_f031k6_adc();
+
     while (!rand_seed)
         for (int i = 0; i < 10; i++)
-            rand_seed += read_adc() << i;
+            rand_seed += read_nucleo_f031k6_adc() << i;
 }
 
 /* Psuedo random bit shift */
