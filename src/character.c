@@ -35,9 +35,7 @@ void render_character(void)
 
     fill_rect(s_char.oldx, s_char.oldy, s_char.width, s_char.height, 0x0000);
 
-img: put_image(s_char.x, s_char.y, s_char.width, s_char.height, s_char.img_data, 
-               s_char.orientation & ORIENTATION_HORIZONTAL, 
-               (s_char.orientation & ORIENTATION_VERTICAL) >> 1);
+img: put_image(s_char.x, s_char.y, s_char.width, s_char.height, s_char.img_data, s_char.orientation);
 }
 
 void init_character(void)

@@ -14,13 +14,15 @@
 #define SCREEN_W 128
 #define SCREEN_H 160
 
-/* Horizontal orientation flags for sprite rendering */
+/* Legacy orientation flags (deprecated - use ORIENTATION_* bit masks instead) */
 #define HORIZONAL_ORIENTATION_LEFT  0
 #define HORIZONAL_ORIENTATION_RIGHT 1
-
-/* Vertical orientation flags for sprite rendering */
 #define VERTICAL_ORIENTATION_DOWN 0
 #define VERTICAL_ORIENTATION_UP   1
+
+/* Orientation bit masks for sprite rendering */
+#define ORIENTATION_HORIZONTAL (0x1U << 0) /* Bit 0: horizontal orientation (0=left, 1=right) */
+#define ORIENTATION_VERTICAL   (0x1U << 1) /* Bit 1: vertical orientation (0=down, 1=up) */
 
 /**
  * Convert 8-bit RGB values to 16-bit RGB565 color format
@@ -51,11 +53,10 @@ void put_pixel(uint8_t x, uint8_t y, uint16_t colour);
  * @param width Image width in pixels
  * @param height Image height in pixels
  * @param imageBuf Pointer to image data buffer
- * @param hOrientation Horizontal orientation (0=left, 1=right)
- * @param vOrientation Vertical orientation (0=down, 1=up)
+ * @param orientation Orientation flags (bit 0=horizontal, bit 1=vertical)
  */
 void put_image(uint8_t x, uint8_t y, uint8_t width, uint8_t height,
-               const uint16_t *imageBuf, uint8_t hOrientation, uint8_t vOrientation);
+               const uint16_t *imageBuf, uint8_t orientation);
 
 /**
  * Draw a line between two points

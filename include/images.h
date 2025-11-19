@@ -15,16 +15,15 @@
  * @param x X coordinate
  * @param y Y coordinate
  */
-#define RENDER_IMAGE(name, x, y) RENDER_IMAGE_ORIENTED(name, x, y, 0, 0)
+#define RENDER_IMAGE(name, x, y) RENDER_IMAGE_ORIENTED(name, x, y, 0)
 
 /**
  * Render image with specified orientation
  * @param name Image name (without IMG_ prefix)
  * @param x X coordinate
  * @param y Y coordinate
- * @param h Horizontal orientation
- * @param v Vertical orientation
+ * @param orientation Orientation flags (bit 0=horizontal, bit 1=vertical)
  */
-#define RENDER_IMAGE_ORIENTED(name, x, y, h, v) (void)put_image(x, y, IMG_##name##_width, IMG_##name##_height, IMG_##name##_data, h, v)
+#define RENDER_IMAGE_ORIENTED(name, x, y, orientation) (void)put_image(x, y, IMG_##name##_width, IMG_##name##_height, IMG_##name##_data, orientation)
 
 #endif

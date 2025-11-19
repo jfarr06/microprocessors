@@ -10,10 +10,7 @@
 #include <stdint.h>
 
 #include <io.h>
-
-/* Orientation bit masks */
-#define ORIENTATION_HORIZONTAL (0x1U << 0) /* Bit 0: horizontal orientation (0=left, 1=right) */
-#define ORIENTATION_VERTICAL   (0x1U << 1) /* Bit 1: vertical orientation (0=down, 1=up) */
+#include <display.h>
 
 /**
  * Character structure representing the player sprite
