@@ -1,3 +1,9 @@
+/**
+ * @file: rooms.h
+ * @desc: Room system interface - procedural generation and collision detection
+ * @auth: James Farrelly (C24402114)
+ */
+
 #ifndef ROOMS_H_
 #define ROOMS_H_
 

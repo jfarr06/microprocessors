@@ -1,3 +1,9 @@
+/**
+ * @file: nucleo_f031k6/serial.h
+ * @desc: UART serial communication interface for debug output
+ * @auth: James Farrelly (C24402114)
+ */
+
 #ifndef NUCLEO_F031K6_SERIAL_H_
 #define NUCLEO_F031K6_SERIAL_H_
 

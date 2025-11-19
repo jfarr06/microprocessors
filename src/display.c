@@ -1,3 +1,9 @@
+/**
+ * @file: display.c
+ * @desc: Display system implementation - ST7735S LCD graphics rendering
+ * @auth: James Farrelly (C24402114)
+ */
+
 #include <stdint.h>
 #include <string.h>
 #include <stm32f031x6.h>

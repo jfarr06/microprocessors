@@ -1,3 +1,9 @@
+/**
+ * @file: io.h
+ * @desc: Input system interface - button handling and state management
+ * @auth: James Farrelly (C24402114)
+ */
+
 #ifndef IO_H_
 #define IO_H_
 

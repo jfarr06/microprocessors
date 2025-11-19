@@ -1,3 +1,9 @@
+/**
+ * @file: images.h
+ * @desc: Image rendering macros for sprite display
+ * @auth: James Farrelly (C24402114)
+ */
+
 #ifndef IMAGES_H_
 #define IMAGES_H_
 

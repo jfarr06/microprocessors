@@ -1,3 +1,9 @@
+/**
+ * @file: scenes.h
+ * @desc: Scene management system interface
+ * @auth: James Farrelly (C24402114)
+ */
+
 #ifndef SCENES_H_
 #define SCENES_H_
 

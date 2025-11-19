@@ -1,3 +1,9 @@
+/**
+ * @file: scenes/game_scene.c
+ * @desc: Game scene implementation - main gameplay scene
+ * @auth: James Farrelly (C24402114)
+ */
+
 #include <stdlib.h>
 
 #include <display.h>

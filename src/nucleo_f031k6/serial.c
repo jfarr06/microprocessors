@@ -1,3 +1,9 @@
+/**
+ * @file: nucleo_f031k6/serial.c
+ * @desc: UART serial communication implementation for debug output
+ * @auth: James Farrelly (C24402114)
+ */
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdarg.h>

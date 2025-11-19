@@ -1,3 +1,9 @@
+/**
+ * @file: debug.h
+ * @desc: Debug logging system with configurable log levels
+ * @auth: James Farrelly (C24402114)
+ */
+
 #ifndef DEBUG_H_
 #define DEBUG_H_
 

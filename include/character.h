@@ -1,3 +1,9 @@
+/**
+ * @file: character.h
+ * @desc: Character system interface - sprite animation and movement
+ * @auth: James Farrelly (C24402114)
+ */
+
 #ifndef CHARACTER_H_
 #define CHARACTER_H_
 

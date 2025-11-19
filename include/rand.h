@@ -1,3 +1,9 @@
+/**
+ * @file: rand.h
+ * @desc: Pseudo-random number generator interface
+ * @auth: James Farrelly (C24402114)
+ */
+
 #ifndef RAND_H_
 #define RAND_H_
 

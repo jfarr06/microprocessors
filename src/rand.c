@@ -1,3 +1,9 @@
+/**
+ * @file: rand.c
+ * @desc: Pseudo-random number generator implementation
+ * @auth: James Farrelly (C24402114)
+ */
+
 #include <stddef.h>
 
 #include <rand.h>

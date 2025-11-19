@@ -1,3 +1,9 @@
+/**
+ * @file: scenes/scene.h
+ * @desc: Base scene structure and macros
+ * @auth: James Farrelly (C24402114)
+ */
+
 #ifndef SCENES_SCENE_H_
 #define SCENES_SCENE_H_
 

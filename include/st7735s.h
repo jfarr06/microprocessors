@@ -1,3 +1,9 @@
+/**
+ * @file: st7735s.h
+ * @desc: ST7735S LCD controller driver interface
+ * @auth: James Farrelly (C24402114)
+ */
+
 #ifndef ST7735S_H_
 #define ST7735S_H_
 

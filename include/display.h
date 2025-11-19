@@ -1,3 +1,9 @@
+/**
+ * @file: display.h
+ * @desc: Display system interface - ST7735S LCD graphics rendering
+ * @auth: James Farrelly (C24402114)
+ */
+
 #ifndef DISPLAY_H_
 #define DISPLAY_H_
 

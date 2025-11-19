@@ -1,3 +1,9 @@
+/**
+ * @file: nucleo_f031k6/adc.c
+ * @desc: ADC (Analog-to-Digital Converter) implementation for STM32F031K6
+ * @auth: James Farrelly (C24402114)
+ */
+
 #include <nucleo_f031k6/adc.h>
 #include <nucleo_f031k6/common.h>
 

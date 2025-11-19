@@ -1,3 +1,9 @@
+/**
+ * @file: nucleo_f031k6/clock.c
+ * @desc: Clock and timing implementation - PLL, SysTick, and delays
+ * @auth: James Farrelly (C24402114)
+ */
+
 #include <nucleo_f031k6/clock.h>
 #include <nucleo_f031k6/common.h>
 

@@ -1,3 +1,9 @@
+/**
+ * @file: images_data.h
+ * @desc: Generated image data from BMP assets
+ * @auth: James Farrelly (C24402114)
+ */
+
 #ifndef IMAGES_DATA_H_
 #define IMAGES_DATA_H_
 

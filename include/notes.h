@@ -1,3 +1,9 @@
+/**
+ * @file: notes.h
+ * @desc: Musical note frequency definitions for sound generation
+ * @auth: James Farrelly (C24402114)
+ */
+
 #ifndef NOTES_H_
 #define NOTES_H_
 

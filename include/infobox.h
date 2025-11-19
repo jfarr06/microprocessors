@@ -1,3 +1,9 @@
+/**
+ * @file: infobox.h
+ * @desc: Information box (HUD) interface - displays coins and timer
+ * @auth: James Farrelly (C24402114)
+ */
+
 #ifndef INFOBOX_H_
 #define INFOBOX_H_
 

@@ -1,3 +1,9 @@
+/**
+ * @file: scenes/game_scene.h
+ * @desc: Game scene interface - main gameplay scene
+ * @auth: James Farrelly (C24402114)
+ */
+
 #ifndef SCENES_GAME_SCENE_H_
 #define SCENES_GAME_SCENE_H_
 

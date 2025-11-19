@@ -1,3 +1,9 @@
+/**
+ * @file: nucleo_f031k6/sound.h
+ * @desc: PWM-based sound generation interface
+ * @auth: James Farrelly (C24402114)
+ */
+
 #ifndef NUCLEO_F031K6_SOUND_H_
 #define NUCLEO_F031K6_SOUND_H_
 

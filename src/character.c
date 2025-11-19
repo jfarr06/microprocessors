@@ -1,3 +1,9 @@
+/**
+ * @file: character.c
+ * @desc: Character system implementation - sprite animation and movement
+ * @auth: James Farrelly (C24402114)
+ */
+
 #include <stdlib.h>
 
 #include <io.h>

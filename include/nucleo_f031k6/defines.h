@@ -1,3 +1,9 @@
+/**
+ * @file: nucleo_f031k6/defines.h
+ * @desc: Pin mode and pull mode definitions for STM32F031K6
+ * @auth: James Farrelly (C24402114)
+ */
+
 #ifndef NUCLEO_F031K6_DEFINES_H_
 #define NUCLEO_F031K6_DEFINES_H_
 

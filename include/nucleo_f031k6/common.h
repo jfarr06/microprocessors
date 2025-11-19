@@ -1,3 +1,9 @@
+/**
+ * @file: nucleo_f031k6/common.h
+ * @desc: Common GPIO and peripheral utility functions for STM32F031K6
+ * @auth: James Farrelly (C24402114)
+ */
+
 #ifndef NUCLEO_F031K6_COMMON_H_
 #define NUCLEO_F031K6_COMMON_H_
 

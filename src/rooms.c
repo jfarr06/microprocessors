@@ -1,3 +1,9 @@
+/**
+ * @file: rooms.c
+ * @desc: Room system implementation - procedural generation and collision detection
+ * @auth: James Farrelly (C24402114)
+ */
+
 #include <stdlib.h>
 #include <memory.h>
 

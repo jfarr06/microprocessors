@@ -1,3 +1,9 @@
+/**
+ * @file: util.h
+ * @desc: Utility functions - collision detection and game frame counter
+ * @auth: James Farrelly (C24402114)
+ */
+
 #ifndef UTIL_H_
 #define UTIL_H_
 

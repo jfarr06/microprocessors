@@ -1,3 +1,9 @@
+/**
+ * @file: infobox.c
+ * @desc: Information box (HUD) implementation - displays coins and timer
+ * @auth: James Farrelly (C24402114)
+ */
+
 #include <math.h>
 #include <nucleo_f031k6/clock.h>
 
