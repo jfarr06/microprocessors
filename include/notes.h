@@ -18,7 +18,7 @@
  * Frequencies are suitable for PWM-based tone generation
  */
 
-#define C0	16      /* C natural, octave 0 */
+#define C0	16     
 #define CS0_Db0	17
 #define D0	18
 #define DS0_Eb0	19
