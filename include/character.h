@@ -11,6 +11,10 @@
 
 #include <io.h>
 
+/* Orientation bit masks */
+#define ORIENTATION_HORIZONTAL (0x1U << 0) /* Bit 0: horizontal orientation (0=left, 1=right) */
+#define ORIENTATION_VERTICAL   (0x1U << 1) /* Bit 1: vertical orientation (0=down, 1=up) */
+
 /**
  * Character structure representing the player sprite
  */
@@ -19,7 +23,7 @@ typedef struct character
     uint8_t width, height;          /* Sprite dimensions in pixels */
     const uint16_t* img_data;       /* Pointer to sprite image data */
     uint8_t x, y, oldx, oldy;       /* Current and previous position coordinates */
-    uint8_t horientation, vorientation; /* Horizontal and vertical orientation flags */
+    uint8_t orientation;            /* Orientation flags (bit 0=horizontal, bit 1=vertical) */
 } character;
 
 /**
