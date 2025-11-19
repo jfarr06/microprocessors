@@ -1,3 +1,9 @@
+/**
+ * @file: scenes/menu_scene.c
+ * @desc: Menu scene implementation - home menu and mode selection
+ * @auth: James Farrelly (C24402114)
+ */
+
 #include <stdlib.h>
 
 #include <display.h>

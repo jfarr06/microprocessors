@@ -1,10 +1,24 @@
+/**
+ * @file: notes.h
+ * @desc: Musical note frequency definitions for sound generation
+ * @auth: James Farrelly (C24402114)
+ */
+
 #ifndef NOTES_H_
 #define NOTES_H_
 
-// Rounded musical note frequencies
-// 'S' is used in place of # (sharp) as that has a special meaning in C
-// DS2_Eb2 is D#2 / Eb2 
-#define C0	16
+/*
+ * Musical note frequency definitions (rounded to nearest Hz)
+ * 
+ * Note naming convention:
+ * - 'S' is used in place of # (sharp) as that has a special meaning in C
+ * - Example: DS2_Eb2 is D#2 / Eb2 (enharmonic equivalent)
+ * - Numbers indicate the octave (0-8)
+ * 
+ * Frequencies are suitable for PWM-based tone generation
+ */
+
+#define C0	16     
 #define CS0_Db0	17
 #define D0	18
 #define DS0_Eb0	19

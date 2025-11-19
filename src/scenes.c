@@ -1,3 +1,9 @@
+/**
+ * @file: scenes.c
+ * @desc: Scene management system implementation
+ * @auth: James Farrelly (C24402114)
+ */
+
 #include <scenes.h>
 
 SCENE_GET_DEF(current); // psuedo scene

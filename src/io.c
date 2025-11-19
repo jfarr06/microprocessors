@@ -1,3 +1,9 @@
+/**
+ * @file: io.c
+ * @desc: Input system implementation - button handling and state management
+ * @auth: James Farrelly (C24402114)
+ */
+
 #include <io.h>
 #include <debug.h>
 

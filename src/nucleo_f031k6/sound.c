@@ -1,3 +1,9 @@
+/**
+ * @file: nucleo_f031k6/sound.c
+ * @desc: PWM-based sound generation implementation
+ * @auth: James Farrelly (C24402114)
+ */
+
 #include <debug.h>
 #include <notes.h>
 #include <nucleo_f031k6/sound.h>

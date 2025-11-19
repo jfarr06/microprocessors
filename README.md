@@ -2,6 +2,10 @@
 
 All code from the TU857 Y2 microprocessors project (CMPU1013)
 
+**A dungeon crawler game for STM32 Nucleo F031K6 with ST7735S display.**
+
+📖 **For detailed technical documentation, see [SUMMARY.md](SUMMARY.md)**
+
 Provides 2 targets: release, debug.
 Debug builds are very slow fyi.
 

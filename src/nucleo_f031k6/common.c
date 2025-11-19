@@ -1,3 +1,9 @@
+/**
+ * @file: nucleo_f031k6/common.c
+ * @desc: Common GPIO and peripheral utility implementations for STM32F031K6
+ * @auth: James Farrelly (C24402114)
+ */
+
 #include <stm32f031x6.h>
 #include <nucleo_f031k6/common.h>
 

@@ -1,3 +1,9 @@
+/**
+ * @file: display.c
+ * @desc: Display system implementation - ST7735S LCD graphics rendering
+ * @auth: James Farrelly (C24402114)
+ */
+
 #include <stdint.h>
 #include <string.h>
 #include <stm32f031x6.h>
@@ -38,10 +44,14 @@ void put_pixel(uint8_t x, uint8_t y, uint16_t colour)
     st7735s_bufw_end();
 }
 
-void put_image(uint8_t x, uint8_t y, uint8_t width, uint8_t height, const uint16_t *imageBuf, uint8_t hOrientation, uint8_t vOrientation)
+void put_image(uint8_t x, uint8_t y, uint8_t width, uint8_t height, const uint16_t *imageBuf, uint8_t orientation)
 {
     open_aperture(x, y, x + width - 1, y + height - 1);
     st7735s_ramwr();
+
+    /* Extract orientation bits */
+    uint8_t hOrientation = orientation & ORIENTATION_HORIZONTAL;
+    uint8_t vOrientation = (orientation & ORIENTATION_VERTICAL) >> 1;
 
     for (y = 0; y < height; y++)
     {
@@ -133,7 +143,7 @@ void print_text(const char *text, uint8_t len, uint8_t scale, uint8_t x, uint8_t
             col++;
         }
 
-        put_image(x, y, FONT_WIDTH * scale, FONT_HEIGHT * scale, textBox, 0, 0);
+        put_image(x, y, FONT_WIDTH * scale, FONT_HEIGHT * scale, textBox, 0);
         x += FONT_WIDTH * scale + 2;
     }
 }

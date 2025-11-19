@@ -1,3 +1,9 @@
+/**
+ * @file: character.c
+ * @desc: Character system implementation - sprite animation and movement
+ * @auth: James Farrelly (C24402114)
+ */
+
 #include <stdlib.h>
 
 #include <io.h>
@@ -29,14 +35,14 @@ void render_character(void)
 
     fill_rect(s_char.oldx, s_char.oldy, s_char.width, s_char.height, 0x0000);
 
-img: put_image(s_char.x, s_char.y, s_char.width, s_char.height, s_char.img_data, s_char.horientation, s_char.vorientation);
+img: put_image(s_char.x, s_char.y, s_char.width, s_char.height, s_char.img_data, s_char.orientation);
 }
 
 void init_character(void)
 {
     SET_CHAR_IMG(char_front);
 
-    s_char.horientation = s_char.vorientation = 0;
+    s_char.orientation = 0;
     s_char.x = s_char.y = 50;
 
     render_character();
@@ -67,8 +73,8 @@ void step_character(const input_status* const input)
 
                 s_char.x++;
                 hmoved = true;
-                s_char.vorientation = VERTICAL_ORIENTATION_DOWN;
-                s_char.horientation = HORIZONAL_ORIENTATION_LEFT;
+                s_char.orientation &= ~ORIENTATION_VERTICAL;  // VERTICAL_ORIENTATION_DOWN
+                s_char.orientation &= ~ORIENTATION_HORIZONTAL; // HORIZONAL_ORIENTATION_LEFT
 
                 moving = true;
             }
@@ -81,8 +87,8 @@ void step_character(const input_status* const input)
 
                 s_char.x--;
                 hmoved = true;
-                s_char.vorientation = VERTICAL_ORIENTATION_DOWN;
-                s_char.horientation = HORIZONAL_ORIENTATION_RIGHT;
+                s_char.orientation &= ~ORIENTATION_VERTICAL;  // VERTICAL_ORIENTATION_DOWN
+                s_char.orientation |= ORIENTATION_HORIZONTAL; // HORIZONAL_ORIENTATION_RIGHT
 
                 moving = true;
             }
@@ -95,8 +101,9 @@ void step_character(const input_status* const input)
 
                 s_char.y++;
                 vmoved = true;
-                s_char.horientation = anim_frm;
-                s_char.vorientation = VERTICAL_ORIENTATION_DOWN;
+                if (anim_frm) s_char.orientation |= ORIENTATION_HORIZONTAL;
+                else s_char.orientation &= ~ORIENTATION_HORIZONTAL;
+                s_char.orientation &= ~ORIENTATION_VERTICAL;  // VERTICAL_ORIENTATION_DOWN
 
                 moving = true;
             }
@@ -109,8 +116,9 @@ void step_character(const input_status* const input)
 
                 s_char.y--;
                 vmoved = true;
-                s_char.horientation = anim_frm;
-                s_char.vorientation = VERTICAL_ORIENTATION_DOWN;
+                if (anim_frm) s_char.orientation |= ORIENTATION_HORIZONTAL;
+                else s_char.orientation &= ~ORIENTATION_HORIZONTAL;
+                s_char.orientation &= ~ORIENTATION_VERTICAL;  // VERTICAL_ORIENTATION_DOWN
 
                 moving = true;
             }

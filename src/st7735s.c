@@ -1,3 +1,9 @@
+/**
+ * @file: st7735s.c
+ * @desc: ST7735S LCD controller driver implementation
+ * @auth: James Farrelly (C24402114)
+ */
+
 #include <debug.h>
 #include <st7735s.h>
 #include <nucleo_f031k6/common.h>

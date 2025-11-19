@@ -1,3 +1,9 @@
+/**
+ * @file: rooms.c
+ * @desc: Room system implementation - procedural generation and collision detection
+ * @auth: James Farrelly (C24402114)
+ */
+
 #include <stdlib.h>
 #include <memory.h>
 
@@ -76,7 +82,7 @@ void render_current_room()
             case ROOM_TILE_STATE_WALL:
                 coords = wall_coordinates[row][col];
 
-                put_image(coords.x, coords.y, coords.w, coords.h, coords.img_data, 0, 0);
+                put_image(coords.x, coords.y, coords.w, coords.h, coords.img_data, 0);
                 
                 break;
             case ROOM_TILE_STATE_COIN:

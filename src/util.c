@@ -1,3 +1,9 @@
+/**
+ * @file: util.c
+ * @desc: Utility functions - collision detection and game frame counter
+ * @auth: James Farrelly (C24402114)
+ */
+
 #include <util.h>
 
 uint32_t game_frame = 0;
