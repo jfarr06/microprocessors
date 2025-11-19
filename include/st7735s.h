@@ -14,7 +14,10 @@
 
 /****** DEFS ******/
 
-// System Commands
+/*
+ * ST7735S System Command Definitions
+ * These commands control basic display operations
+ */
 
 #define ST7735S_CMD_NOP        (0x00) /* No Operation */
 #define ST7735S_CMD_SWRESET    (0x01) /* Software Reset */
@@ -53,7 +56,10 @@
 #define ST7735S_CMD_RDID2      (0xDB) /* Read ID2 */
 #define ST7735S_CMD_RDID3      (0xDC) /* Read ID3 */
 
-// Panel function commands
+/*
+ * ST7735S Panel Function Commands
+ * These commands configure display panel settings
+ */
 
 #define ST7735S_CMD_FRMCTR1    (0xB1) /* Frame Control Setting - In normal mode - full colors */
 #define ST7735S_CMD_FRMCTR2    (0xB2) /* Frame Control Setting - In idle mode - 8 colors */
@@ -75,10 +81,16 @@
 #define ST7735S_CMD_GMCTRN1    (0xE1) /* Gamma adjustment (-pol) */
 #define ST7735S_CMD_GCV        (0xFC) /* Gate clock variable */
 
+/*
+ * Column inversion control bits
+ */
 #define ST7735S_COLINV_NM      (0x1U << 0x0) /* Normal mode column inversion */
 #define ST7735S_COLINV_IM      (0x1U << 0x1) /* Idle mode column inversion */
 #define ST7735S_COLINV_PMFC    (0x1U << 0x2) /* Partial mode + full color column inversion */
 
+/*
+ * Memory data access control (MADCTL) bits
+ */
 #define ST7735S_MADCTL_MY      (0x1U << 0x7) /* Row address order */
 #define ST7735S_MADCTL_MX      (0x1U << 0x6) /* Column address order */
 #define ST7735S_MADCTL_MV      (0x1U << 0x5) /* Row/column exchange */
@@ -86,9 +98,12 @@
 #define ST7735S_MADCTL_BGR     (0x1U << 0x3) /* RGB-BGR order */
 #define ST7735S_MADCTL_MH      (0x1U << 0x2) /* Horizontal refresh order */
 
-#define ST7735S_COLMOD_12BIT   (0b011) /* 12-bit */
-#define ST7735S_COLMOD_16BIT   (0b101) /* 16-bit */
-#define ST7735S_COLMOD_18BIT   (0b110) /* 18-bit */
+/*
+ * Color mode (pixel format) definitions
+ */
+#define ST7735S_COLMOD_12BIT   (0b011) /* 12-bit color depth */
+#define ST7735S_COLMOD_16BIT   (0b101) /* 16-bit color depth (RGB565) */
+#define ST7735S_COLMOD_18BIT   (0b110) /* 18-bit color depth */
 
 /**
  * Initializes the SPI for the ST7735S v1.1 display driver.

@@ -9,6 +9,18 @@
 
 #include <stdint.h>
 
+/*
+ * Auto-generated image data arrays
+ * 
+ * For each image, three definitions are provided:
+ * - IMG_<name>_width: Image width in pixels
+ * - IMG_<name>_height: Image height in pixels
+ * - IMG_<name>_data: RGB565 pixel data array
+ * 
+ * Data is packed to 2-byte alignment for efficient storage
+ */
+
+/* Character back moving sprite */
 #define IMG_char_back_mov_width  (12)
 #define IMG_char_back_mov_height (16)
 #pragma pack(push, 2)

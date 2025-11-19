@@ -9,7 +9,14 @@
 
 #include <scenes/scene.h>
 
+/**
+ * Get the menu scene instance
+ */
 SCENE_GET_DEC(menu);
+
+/**
+ * Initialize the menu scene
+ */
 void SCENE_F(menu, init)(void);
 
 #endif // !SCENES_MENU_SCENE_H_
