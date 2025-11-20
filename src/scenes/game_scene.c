@@ -7,6 +7,7 @@
 #include <stdlib.h>
 
 #include <display.h>
+#include <debug.h>
 
 #include <rooms.h>
 #include <strings.h>
@@ -100,6 +101,7 @@ static void SCENE_F(game, render_status_screen)(uint8_t running_state)
 
 void SCENE_F(game, on_change)(void) 
 {
+    DBG_INFO("Game scene activated");
     fill_rect(0, 0, SCREEN_W, SCREEN_H, COLOUR_BLACK);
 
     s_reset_all_states();
@@ -117,6 +119,7 @@ static void SCENE_F(game, s_on_click_pause_menu)()
     switch (s_selected_option) 
     {
         case PAUSE_OPTION_RESUME:
+            DBG_INFO("Resuming game");
             s_state = GAME_STATE_RUNNING;
 
             s_render_game_state();
@@ -124,6 +127,7 @@ static void SCENE_F(game, s_on_click_pause_menu)()
 
             break;
         case PAUSE_OPTION_RESTART:
+            DBG_INFO("Restarting game");
             s_reset_all_states();
             s_state = GAME_STATE_RUNNING;
 
@@ -131,6 +135,7 @@ static void SCENE_F(game, s_on_click_pause_menu)()
 
             break;
         case PAUSE_OPTION_HOME_MENU:
+            DBG_INFO("Returning to home menu from game");
             change_scene(SCENE(menu));
 
             s_reset_all_states();
@@ -147,6 +152,7 @@ void SCENE_F(game, step)(const input_status* const input)
         case GAME_STATE_RUNNING:
             if (input->trigger & BUTTON_ENTER)
             {
+                DBG_INFO("Game paused");
                 stop_music();
                 play_sound_effect(C5, 500); 
 
@@ -167,6 +173,7 @@ void SCENE_F(game, step)(const input_status* const input)
 
                 break;
             default:
+                DBG_INFO("Game ended, showing status screen");
                 s_state = GAME_STATE_STATUS_SCREEN;
                 SCENE_F(game, render_status_screen)(running_status);
 
@@ -203,6 +210,7 @@ void SCENE_F(game, step)(const input_status* const input)
 
 void SCENE_F(game, init)(void) 
 {
+    DBG_INFO("Initializing game scene");
     s_game_scene = (scene*)malloc(sizeof(scene));
     s_game_scene->on_change = SCENE_F(game, on_change);
     s_game_scene->step = SCENE_F(game, step);

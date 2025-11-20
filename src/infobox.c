@@ -12,6 +12,7 @@
 #include <strings.h>
 #include <font5x7.h>
 #include <display.h>
+#include <debug.h>
 
 #include <infobox.h>
 
@@ -87,6 +88,7 @@ void render_infobox(void)
 
 void init_infobox()
 {
+    DBG_INFO("Initializing infobox - time: %d, target coins: %d", s_infobox_time, s_infobox_coins_target);
     s_infobox_time_tick = s_infobox_time;
     s_infobox_coins_count = 0;
 
@@ -101,6 +103,7 @@ void step_infobox()
         if (nucleo_f031k6_millis % 1000 == 0) // Every 1000ms (1s)
         {
             s_infobox_time_tick--;
+            DBG_TRACE("Infobox time tick: %d seconds remaining", s_infobox_time_tick);
 
             set_music_tempo_by_time(s_infobox_time_tick);
 
@@ -113,6 +116,7 @@ void step_infobox()
 
 void set_infobox_coins(uint8_t coins)
 {
+    DBG_INFO("Setting infobox coin target to %d", coins);
     s_infobox_coins_target = coins;
 
     s_should_render_infobox = true;
@@ -120,6 +124,7 @@ void set_infobox_coins(uint8_t coins)
 
 void set_infobox_start_time(uint16_t time)
 {
+    DBG_INFO("Setting infobox start time to %d seconds", time);
     s_infobox_time = time;
     s_infobox_time_tick = time;
 
@@ -129,6 +134,7 @@ void set_infobox_start_time(uint16_t time)
 void inc_infobox_coins()
 {
     s_infobox_coins_count++;
+    DBG_TRACE("Infobox coins incremented to %d/%d", s_infobox_coins_count, s_infobox_coins_target);
 
     s_should_render_infobox = true;
 }
@@ -136,8 +142,16 @@ void inc_infobox_coins()
 uint8_t get_running_status(void)
 {
     if (s_infobox_time == 0) return RUNNING_STATUS_RUN;
-    if (s_infobox_time_tick != 0 && s_infobox_coins_count >= s_infobox_coins_target) return RUNNING_STATUS_WIN;
-    if (s_infobox_time_tick == 0 && s_infobox_coins_count < s_infobox_coins_target) return RUNNING_STATUS_LOSS;
+    if (s_infobox_time_tick != 0 && s_infobox_coins_count >= s_infobox_coins_target) 
+    {
+        DBG_INFO("Game won! All coins collected with time remaining");
+        return RUNNING_STATUS_WIN;
+    }
+    if (s_infobox_time_tick == 0 && s_infobox_coins_count < s_infobox_coins_target) 
+    {
+        DBG_INFO("Game lost! Time expired before collecting all coins");
+        return RUNNING_STATUS_LOSS;
+    }
 
     return RUNNING_STATUS_RUN;
 }

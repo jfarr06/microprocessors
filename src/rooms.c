@@ -10,6 +10,7 @@
 
 #include <notes.h>
 #include <music.h>
+#include <debug.h>
 
 #include <rand.h>
 #include <rooms.h>
@@ -145,13 +146,16 @@ void render_current_room()
 
 void set_coin_generation_chance(uint8_t percentage)
 {
+    DBG_INFO("Setting coin generation chance to %d%%", percentage);
     s_coin_chance = percentage;
 }
 
 void init_rooms()
 {
+    DBG_INFO("Initializing rooms...");
     if (s_rooms[0] != NULL)
     {
+        DBG_TRACE("Cleaning up existing rooms");
         for (uint8_t i = 0; i < MAX_NUM_ROOMS; i++)
             if (s_rooms[i])
             {
@@ -177,6 +181,7 @@ void init_rooms()
 
     s_rooms[s_room_index] = initial_room;
     s_room_count = 1;
+    DBG_INFO("Initial room created");
 }
 
 static bool is_intersecting_coords(const character* const player, coordinate_set_2x2_t coords, uint8_t w, uint8_t h)
@@ -261,6 +266,7 @@ uint8_t get_random_state()
 
 static void add_room(uint8_t transition_idx, room* const transitioning_room)
 {
+    DBG_INFO("Adding new room via transition %d, current room count: %d", transition_idx, s_room_count);
     if (s_room_index == MAX_NUM_ROOMS-1)
         s_room_index = 0;
     else 
@@ -338,6 +344,7 @@ void step_rooms()
     {
         if (char_intersects_coin(player))
         {
+            DBG_INFO("Coin collected!");
             current_room->structure[1][1] = ROOM_TILE_STATE_HALL;
             
             inc_infobox_coins();
@@ -375,7 +382,10 @@ void step_rooms()
         if (transition_room == -1)
             add_room(idx, current_room);
         else
+        {
+            DBG_INFO("Transitioning to existing room %d", transition_room);
             s_room_index = transition_room;
+        }
 
         render_character();
         render_current_room();

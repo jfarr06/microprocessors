@@ -7,17 +7,21 @@
 #include <stddef.h>
 
 #include <rand.h>
+#include <debug.h>
 #include <nucleo_f031k6/adc.h>
 #include <nucleo_f031k6/common.h>
 
 static uint32_t s_rand_seed = 0;
 void init_rand()
 {
+    DBG_INFO("Initializing random number generator...");
     init_nucleo_f031k6_adc();
 
     while (!s_rand_seed)
         for (int i = 0; i < 10; i++)
             s_rand_seed += read_nucleo_f031k6_adc() << i;
+    
+    DBG_INFO("Random seed initialized: %p", s_rand_seed);
 }
 
 /* Psuedo random bit shift */

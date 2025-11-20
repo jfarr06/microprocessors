@@ -7,6 +7,7 @@
 #include <scenes.h>
 #include <strings.h>
 #include <display.h>
+#include <debug.h>
 
 #include <notes.h>
 #include <music.h>
@@ -15,8 +16,10 @@ SCENE_GET_DEF(current); // psuedo scene
 
 void init_scenes()
 {
+    DBG_INFO("Initializing scenes...");
     SCENE_F(menu, init)();
     SCENE_F(game, init)();
+    DBG_INFO("Scenes initialized");
 }
 
 void step_scenes(const input_status* const input)
@@ -30,6 +33,7 @@ void change_scene(scene* scene)
 {
     if (s_current_scene != scene)
     {
+        DBG_INFO("Changing scene");
         s_current_scene = scene;
         s_current_scene->on_change();
     }
@@ -44,6 +48,7 @@ bool step_options(const input_status* const input, uint8_t num_options, uint8_t*
         else
             --*selected_option;
 
+        DBG_TRACE("Option navigated up to %d", *selected_option);
         play_sound_effect(C5, 50);
 
         return true;
@@ -54,6 +59,7 @@ bool step_options(const input_status* const input, uint8_t num_options, uint8_t*
         else
             ++*selected_option;
 
+        DBG_TRACE("Option navigated down to %d", *selected_option);
         play_sound_effect(C5, 50);
 
         return true;

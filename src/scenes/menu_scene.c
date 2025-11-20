@@ -10,6 +10,7 @@
 #include <rooms.h>
 #include <colours.h>
 #include <display.h>
+#include <debug.h>
 
 #include <notes.h>
 #include <music.h>
@@ -148,6 +149,7 @@ static void SCENE_F(menu, s_render)()
 
 void SCENE_F(menu, on_change)()
 {
+    DBG_INFO("Menu scene activated");
     s_selected_option = 0;
 
     play_music(get_menu_music());
@@ -157,6 +159,7 @@ void SCENE_F(menu, on_change)()
 
 static void home_menu_on_click()
 {
+    DBG_INFO("Navigating to mode select");
     play_sound_effect(G5, 100);
 
     s_state = MENU_STATE_MODE_SELECT;
@@ -172,6 +175,7 @@ static void mode_select_on_click()
     switch (s_selected_option)
     {
     case MODE_SELECT_OPTION_ENDLESS:
+        DBG_INFO("Starting game in Endless mode");
         s_state = MENU_STATE_HOME_MENU;
 
         set_coin_generation_chance(25);
@@ -182,6 +186,7 @@ static void mode_select_on_click()
 
         break;
     case MODE_SELECT_OPTION_RANDOM:
+        DBG_INFO("Starting game in Random mode");
         s_state = MENU_STATE_HOME_MENU;
 
         set_coin_generation_chance(sys_rand(5, 41));
@@ -192,6 +197,7 @@ static void mode_select_on_click()
 
         break;
     case MODE_SELECT_OPTION_RETURN: // Return
+        DBG_INFO("Returning to home menu");
         s_state = MENU_STATE_HOME_MENU;
 
         s_selected_option = 0;
@@ -199,6 +205,7 @@ static void mode_select_on_click()
 
         break;
     default:
+        DBG_INFO("Starting game in preset mode %d", s_selected_option);
         s_state = MENU_STATE_HOME_MENU;
 
         const uint8_t* mode_values = s_mode_values[s_selected_option];
@@ -237,6 +244,7 @@ void SCENE_F(menu, step)(const input_status* const input)
 
 void SCENE_F(menu, init)(void) 
 {
+    DBG_INFO("Initializing menu scene");
     s_menu_scene = (scene*)malloc(sizeof(scene));
     s_menu_scene->on_change = SCENE_F(menu, on_change);
     s_menu_scene->step = SCENE_F(menu, step);
