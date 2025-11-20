@@ -28,20 +28,29 @@ This is a dungeon crawler game developed for the STM32 Nucleo F031K6 microcontro
 The game uses a scene-based architecture with two main scenes:
 
 - **Menu Scene** (`menu_scene.c`): 
-  - Home menu with "Play" and "About" options
-  - Mode selection with 5 difficulty levels:
+  - Home menu with "Play" option
+  - Mode selection with 5 difficulty levels plus Return option:
     - **Easy:** Lots of coins, lots of time
     - **Medium:** Reduced coins, lots of time
     - **Hard:** Reduced coins, reduced time
     - **Endless:** Reduced coins, no time limit
     - **Random:** Random coins and time limit
+  - Descriptive text displayed for each selected mode
   - Navigation using up/down buttons, selection with enter
+  - Color-coded difficulty options (Lime for Easy, Yellow for Medium, Red for Hard, Orange for Endless, Cyan for Random)
 
 - **Game Scene** (`game_scene.c`):
   - Main gameplay loop
   - Room rendering and management
   - Character movement and collision handling
   - Information box display
+  - Pause menu with three states: Running, Paused, Status Screen
+  - Pause menu options: Resume, Restart, Home Menu
+  - Win/Loss status screen with "Press Enter" prompt
+
+- **Scene Utilities** (`scenes.c`):
+  - `step_options()`: Helper function for cycling through menu options
+  - `render_options()`: Renders selectable options with visual indicator for current selection
 
 #### 2. Room System (`src/rooms.c`, `include/rooms.h`)
 Procedural room generation and management:
@@ -68,6 +77,7 @@ Player character with sprite animation:
   - `char_back_mov`: Facing up (moving)
   - `char_right`: Facing right (idle)
   - `char_right_mov`: Facing right (moving)
+  - Note: `char_left` and `char_left_mov` assets exist but are unused; left-facing uses horizontal flip of char_right sprites
   
 - **Movement System:**
   - 4-directional movement (up, down, left, right)
@@ -135,8 +145,13 @@ Platform-specific implementations:
   - Range-based random value generation
   
 - **Collision Detection** (`src/util.c`):
-  - Rectangle-to-rectangle intersection
-  - Rectangle-to-circle intersection
+  - `rect_intersects_rect()`: Rectangle-to-rectangle intersection
+  - `rect_intersects_circle()`: Rectangle-to-circle intersection with improved type handling
+  
+- **String and Math Utilities** (`src/util.c`):
+  - `strlen_custom()`: Custom string length calculation
+  - `digit_count()`: Count digits in a number using log10
+  - `game_frame`: Global frame counter for timing
   
 - **Debug System** (`include/debug.h`):
   - Conditional compilation for debug builds
@@ -146,12 +161,15 @@ Platform-specific implementations:
 
 ### Gameplay Loop
 1. Player starts in the menu scene
-2. Selects difficulty mode
-3. Spawns in initial room with coin(s)
-4. Navigate between rooms using transition points
-5. Collect all coins before time expires
-6. Win condition: All coins collected with time remaining
-7. Loss condition: Time expires before collecting all coins
+2. Navigates through home menu to mode selection
+3. Selects difficulty mode with descriptive information displayed
+4. Spawns in initial room with coin(s)
+5. Navigate between rooms using transition points
+6. Can pause game at any time to access pause menu (Resume, Restart, Home Menu)
+7. Collect all coins before time expires (except in Endless mode)
+8. Win condition: All coins collected with time remaining
+9. Loss condition: Time expires before collecting all coins
+10. Status screen displays win/loss result with option to return to menu
 
 ### Collision System
 - Wall collision prevents movement through obstacles
@@ -240,9 +258,9 @@ microprocessors/
 ```
 
 ### Code Statistics
-- **Total lines of code:** ~1,973 lines (C source only)
-- **Source files:** 16 C files
-- **Header files:** 23 H files
+- **Total lines of code:** ~2,372 lines (C source only)
+- **Source files:** 17 C files
+- **Header files:** 24 H files
 - **Primary language:** C (with some inline assembly if needed)
 
 ## Key Features
@@ -380,7 +398,7 @@ This project demonstrates:
 **Course:** TU857 Y2 Microprocessors (CMPU1013)  
 **Target:** STM32 Nucleo F031K6  
 
-This project is educational in nature and developed as coursework for Trinity University Dublin.
+This project is educational in nature and developed as coursework for Technological University Dublin (TU Dublin).
 
 ---
 
