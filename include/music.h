@@ -59,4 +59,12 @@ void step_music(void);
  */
 void play_sound_effect(uint32_t frequency, uint16_t duration);
 
+/**
+ * Set the time-based speed multiplier for music playback
+ * Music speeds up as time runs low to create urgency
+ * 
+ * @param time_remaining Time remaining in seconds (0 = no timer)
+ */
+void set_music_tempo_by_time(uint16_t time_remaining);
+
 #endif // MUSIC_H_

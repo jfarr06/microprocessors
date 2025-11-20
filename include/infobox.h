@@ -51,4 +51,10 @@ void set_infobox_start_time(uint16_t time);
  */
 uint8_t get_running_status(void);
 
+/**
+ * Get the current remaining time in seconds
+ * @return Remaining time in seconds, 0 if no timer
+ */
+uint16_t get_infobox_time_remaining(void);
+
 #endif // !INFOBOX_H_

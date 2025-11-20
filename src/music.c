@@ -18,6 +18,9 @@ static uint32_t s_note_start_time = 0;
 static uint32_t s_effect_frequency = 0;
 static uint32_t s_effect_end_time = 0;
 
+/* Tempo adjustment based on time remaining */
+static uint16_t s_tempo_multiplier = 100; /* Percentage: 100 = normal, 150 = 1.5x speed */
+
 void init_music(void)
 {
     s_current_track = 0;
@@ -25,6 +28,7 @@ void init_music(void)
     s_note_start_time = 0;
     s_effect_frequency = 0;
     s_effect_end_time = 0;
+    s_tempo_multiplier = 100;
 
     DBG_INFO("Music system initialized");
 }
@@ -81,8 +85,11 @@ void step_music(void)
     /* Check if current note has finished */
     const music_note* current_note = &s_current_track->notes[s_current_note_index];
     uint32_t elapsed = current_time - s_note_start_time;
+    
+    /* Apply tempo multiplier to note duration */
+    uint32_t adjusted_duration = (current_note->duration * 100) / s_tempo_multiplier;
 
-    if (elapsed >= current_note->duration)
+    if (elapsed >= adjusted_duration)
     {
         /* Move to next note */
         s_current_note_index++;
@@ -121,4 +128,41 @@ void play_sound_effect(uint32_t frequency, uint16_t duration)
     play_nucleo_f031k6_sound(frequency);
     
     DBG_DEBUG("Playing sound effect: %dHz for %dms", frequency, duration);
+}
+
+void set_music_tempo_by_time(uint16_t time_remaining)
+{
+    /* Speed up music as time gets low:
+     * - 30+ seconds: normal speed (100%)
+     * - 20-29 seconds: slightly faster (110%)
+     * - 10-19 seconds: faster (125%)
+     * - 5-9 seconds: much faster (150%)
+     * - 0-4 seconds: very fast (200%)
+     * - 0 or no timer: normal speed (100%)
+     */
+    
+    if (time_remaining == 0)
+    {
+        s_tempo_multiplier = 100; /* No timer, normal speed */
+    }
+    else if (time_remaining >= 30)
+    {
+        s_tempo_multiplier = 100;
+    }
+    else if (time_remaining >= 20)
+    {
+        s_tempo_multiplier = 110;
+    }
+    else if (time_remaining >= 10)
+    {
+        s_tempo_multiplier = 125;
+    }
+    else if (time_remaining >= 5)
+    {
+        s_tempo_multiplier = 150;
+    }
+    else
+    {
+        s_tempo_multiplier = 200;
+    }
 }

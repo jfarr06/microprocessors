@@ -13,6 +13,7 @@
 #include <display.h>
 
 #include <infobox.h>
+#include <music.h>
 
 #define INFOBOX_BOUNDS_X 0
 #define INFOBOX_BOUNDS_Y 128
@@ -88,6 +89,9 @@ void init_infobox()
 {
     s_infobox_time_tick = s_infobox_time;
     s_infobox_coins_count = 0;
+    
+    /* Set initial music tempo based on starting time */
+    set_music_tempo_by_time(s_infobox_time_tick);
 }
 
 void step_infobox()
@@ -98,6 +102,9 @@ void step_infobox()
         if (s_nucleo_f031k6_millis % 1000 == 0) // Every 1000ms (1s)
         {
             s_infobox_time_tick--;
+
+            /* Update music tempo based on remaining time */
+            set_music_tempo_by_time(s_infobox_time_tick);
 
             s_should_render_infobox = true;
         }
@@ -135,4 +142,9 @@ uint8_t get_running_status(void)
     if (s_infobox_time_tick == 0 && s_infobox_coins_count < s_infobox_coins_target) return RUNNING_STATUS_LOSS;
 
     return RUNNING_STATUS_RUN;
+}
+
+uint16_t get_infobox_time_remaining(void)
+{
+    return s_infobox_time_tick;
 }
