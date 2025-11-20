@@ -23,12 +23,26 @@
 /* 
  * Tile-based double buffering for memory-constrained systems
  * 
- * Strategy: Instead of buffering the entire screen (40KB), we use a tile buffer
- * that holds small regions. The screen is divided into tiles, and each tile
- * is rendered to the buffer before being sent to the display.
+ * PROBLEM: Traditional double buffering requires two full screen buffers:
+ *   - Screen size: 128 x 160 pixels x 2 bytes = 40,960 bytes per buffer
+ *   - Total needed: 2 buffers = ~82KB
+ *   - Available SRAM: Only 4KB on STM32F031K6
+ *   - Conclusion: Full double buffering is impossible
+ * 
+ * SOLUTION: Tile-based buffering
+ *   - Use a single small tile buffer (32x32 pixels = 2KB)
+ *   - Buffer small sprites and rectangles that fit in tile
+ *   - Flush tile buffer atomically to reduce tearing
+ *   - Large operations bypass buffer and render directly
+ *   - Frame synchronization via begin/end reduces visual artifacts
+ * 
+ * BENEFITS:
+ *   - Smoother sprite rendering (character movement)
+ *   - Reduced screen tearing on small updates
+ *   - Fits within 4KB SRAM budget
+ *   - Minimal performance overhead
  * 
  * Memory usage: 1 tile buffer = 32x32 pixels x 2 bytes = 2KB
- * This fits comfortably within the 4KB SRAM budget.
  */
 
 #define TILE_WIDTH  32
@@ -114,28 +128,10 @@ void fill_rect(uint8_t x, uint8_t y, uint8_t width, uint8_t height, uint16_t col
     uint32_t px = height * width;
     
     /* 
-     * For tile-sized or smaller rectangles during active frame,
-     * use buffering to reduce tearing
+     * Direct rendering is most efficient for fill operations.
+     * The st7735s_bufw16() function already optimally writes repeated values.
+     * Buffering doesn't provide benefits here, so skip it.
      */
-    if (s_frame_active && width <= TILE_WIDTH && height <= TILE_HEIGHT && px <= TILE_SIZE)
-    {
-        /* Fill tile buffer */
-        for (uint16_t i = 0; i < px; i++)
-        {
-            s_tile_buffer[i] = colour;
-        }
-        
-        /* Set tile position and mark as dirty */
-        s_current_tile_x = x / TILE_WIDTH;
-        s_current_tile_y = y / TILE_HEIGHT;
-        s_tile_dirty = true;
-        
-        /* Flush immediately for now (can be optimized later) */
-        flush_tile_buffer();
-        return;
-    }
-    
-    /* Default: direct rendering for large operations or non-buffered mode */
     open_aperture(x, y, x + width - 1, y + height - 1);
 
     st7735s_ramwr();

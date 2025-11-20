@@ -113,13 +113,25 @@ void print_number(uint16_t number, uint8_t scale, uint8_t x, uint8_t y,
 
 /**
  * Begin a frame for double-buffered rendering.
- * Call this at the start of each frame to prepare for buffered rendering.
+ * 
+ * This function enables tile-based buffering for the current frame,
+ * which reduces screen tearing by batching small sprite and rectangle
+ * updates into a 2KB tile buffer before sending to display.
+ * 
+ * Call this at the start of each frame rendering cycle.
+ * Must be paired with display_frame_end().
  */
 void display_frame_begin(void);
 
 /**
  * End a frame and present all buffered changes to the display.
- * Call this at the end of each frame to ensure smooth presentation.
+ * 
+ * This function flushes any remaining buffered content and adds a small
+ * delay to allow the display refresh cycle to complete, further reducing
+ * visual tearing artifacts.
+ * 
+ * Call this at the end of each frame rendering cycle.
+ * Must be paired with display_frame_begin().
  */
 void display_frame_end(void);
 

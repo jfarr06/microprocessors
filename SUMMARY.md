@@ -271,6 +271,10 @@ microprocessors/
 - Shape drawing primitives (rectangles, circles)
 - Text rendering with 5x7 bitmap font
 - Image data stored in flash memory
+- **Double buffering** with tile-based approach
+  - 32x32 pixel tile buffer (2KB) for smoother rendering
+  - Automatic buffering for sprites and small rectangles
+  - Frame synchronization to reduce tearing
 
 ### Audio
 - PWM-based tone generation
@@ -282,6 +286,10 @@ microprocessors/
 - Minimal memory allocation (static buffers where possible)
 - Frame-based timing for consistent gameplay
 - Efficient collision detection using axis-aligned bounding boxes
+- **Tile-based double buffering** for smoother graphics (2KB tile buffer for 32x32 pixel regions)
+  - Reduces screen tearing during sprite updates
+  - Coordinated frame rendering via `display_frame_begin()` and `display_frame_end()`
+  - Fits within 4KB SRAM constraint (avoids 40KB full-screen buffer)
 
 ### Debug Features
 - Conditional compilation for debug builds
@@ -355,11 +363,12 @@ The STM32F031K6 has:
 - Save/load game state
 
 ### Technical
-- Double buffering for smoother graphics
+- ~~Double buffering for smoother graphics~~ ✓ Implemented with tile-based approach
 - Hardware sprite support (if available)
 - DMA for display updates
 - More sophisticated collision shapes
 - Audio mixing for background music
+- VSync/TE line synchronization for further tearing reduction
 
 ### Features
 - High score persistence (EEPROM/Flash)
