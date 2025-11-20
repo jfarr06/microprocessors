@@ -147,6 +147,7 @@ Background music and audio mixing:
 - **Looping Support**: Tracks can loop continuously or play once
 - **Sound Effects API**: Play short sound effects that temporarily override music
 - **Music Tracks** (`music_tracks.c`): Pre-defined melodies for menu and game scenes
+- **Dynamic Tempo**: Music speeds up as countdown timer approaches zero (5 speed tiers from 100% to 200%)
 
 #### 9. Utility Systems
 
@@ -289,6 +290,7 @@ microprocessors/
 - Looping music tracks for menu and game scenes
 - Sound effect prioritization over background music
 - Non-blocking music playback using timer-based advancement
+- Dynamic tempo adjustment: music speeds up as countdown timer approaches zero to create urgency
 
 ### Performance Optimization
 - Dirty rectangle rendering (only redraws changed areas)
