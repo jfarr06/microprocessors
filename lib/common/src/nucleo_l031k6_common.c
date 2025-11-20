@@ -2,6 +2,11 @@
 #include <stm32l031xx.h>
 #include <nucleo_l031k6_common.h>
 
+void enable_gpio_clocks(uint32_t ports)
+{
+    RCC->IOPENR |= ports;
+}
+
 void pin_mode(GPIO_TypeDef* port, uint32_t bit, uint32_t mode)
 {
     mode <<= bit * 2;

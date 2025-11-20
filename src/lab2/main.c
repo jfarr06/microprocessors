@@ -14,7 +14,7 @@ int main()
 {
     static int bButtonOn;
 
-    RCC->IOPENR |= RCC_IOPENR_GPIOAEN + RCC_IOPENR_GPIOBEN;
+    enable_gpio_clocks(RCC_IOPENR_GPIOAEN | RCC_IOPENR_GPIOBEN);
 
     pin_mode(GPIOA, GPIO_MODER_MODE0_Pos, PINMODE_OUTPUT); // PA0 = OUTPUT
     pin_mode(GPIOA, GPIO_MODER_MODE1_Pos, PINMODE_OUTPUT); // PA1 = OUTPUT

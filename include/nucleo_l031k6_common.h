@@ -10,6 +10,13 @@
 //========== FUNCS
 
 /**
+ * Enables GPIO port clocks based on bitmask.
+ *
+ * @param ports Bitmask of RCC_IOPENR flags for ports to enable.
+ */
+void enable_gpio_clocks(uint32_t ports);
+
+/**
  * Sets the pinmode for the specified bit on the specified port.
  *
  * @param port The GPIO port to use.

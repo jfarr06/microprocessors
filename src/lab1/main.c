@@ -5,15 +5,12 @@
  * */
 
 #include <stm32l031xx.h>
-
-void delay(volatile unsigned int ms)
-{
-    while (ms--);
-}
+#include <labs_common.h>
+#include <nucleo_l031k6_common.h>
 
 int main()
 {
-    RCC->IOPENR |= RCC_IOPENR_GPIOBEN; // Enable clock
+    enable_gpio_clocks(RCC_IOPENR_GPIOBEN); // Enable clock
     GPIOB->MODER = GPIO_MODER_MODE3_1; // Set mode
     
     while (1)

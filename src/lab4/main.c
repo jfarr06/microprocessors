@@ -39,7 +39,7 @@ int main()
 {
     init_hsi16();
 
-    RCC->IOPENR |= RCC_IOPENR_GPIOAEN;
+    enable_gpio_clocks(RCC_IOPENR_GPIOAEN);
 
 	init_serial(GPIOA, USART_TX, GPIOA, USART_RX);
     init_common_lights();

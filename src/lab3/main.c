@@ -63,7 +63,7 @@ int main()
     const int baseTime = 1000000;
     int currentTime = baseTime;
 
-    RCC->IOPENR |= 0b11;
+    enable_gpio_clocks(RCC_IOPENR_GPIOAEN | RCC_IOPENR_GPIOBEN);
 
     init_common_lights();
 
