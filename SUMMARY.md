@@ -138,7 +138,19 @@ Platform-specific implementations:
 - **adc.c**: Analog-to-digital conversion (if needed)
 - **common.c**: GPIO and peripheral utilities
 
-#### 8. Utility Systems
+#### 8. Music System (`src/music.c`, `include/music.h`)
+Background music and audio mixing:
+
+- **Music Structure**: Note sequences with frequency and duration
+- **Audio Mixing**: Prioritizes sound effects over background music
+- **Non-blocking Playback**: Timer-based advancement without blocking game loop
+- **Looping Support**: Tracks can loop continuously or play once
+- **Sound Effects API**: Play short sound effects that temporarily override music
+- **Music Tracks** (`music_tracks.c`): Pre-defined melodies for menu, game, victory, and defeat scenes
+- **Dynamic Tempo**: Music speeds up as countdown timer approaches zero (5 speed tiers from 100% to 200%)
+- **Menu Sound Effects**: Navigation (C5, 50ms) and selection (G5, 100ms) feedback sounds
+
+#### 9. Utility Systems
 
 - **Random Number Generation** (`src/rand.c`):
   - Pseudo-random number generator initialization
@@ -276,6 +288,12 @@ microprocessors/
 - PWM-based tone generation
 - Musical note frequency definitions (C0-C8)
 - Support for polyphonic sound effects (if implemented)
+- Background music system with audio mixing
+- Music tracks: menu (looping), game (looping), victory (one-shot), defeat (one-shot)
+- Sound effects: coin collection, menu navigation, menu selection
+- Sound effect prioritization over background music
+- Non-blocking music playback using timer-based advancement
+- Dynamic tempo adjustment: music speeds up as countdown timer approaches zero to create urgency
 
 ### Performance Optimization
 - Dirty rectangle rendering (only redraws changed areas)
@@ -359,7 +377,6 @@ The STM32F031K6 has:
 - Hardware sprite support (if available)
 - DMA for display updates
 - More sophisticated collision shapes
-- Audio mixing for background music
 
 ### Features
 - High score persistence (EEPROM/Flash)

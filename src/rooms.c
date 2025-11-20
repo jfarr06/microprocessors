@@ -24,7 +24,7 @@
 #include <images_data.h>
 
 /* Maximum number of rooms that can be generated */
-#define MAX_NUM_ROOMS 3
+#define MAX_NUM_ROOMS 5
 
 /* Room tile state values */
 #define ROOM_TILE_STATE_WALL 0x0    /* Impassable wall tile */

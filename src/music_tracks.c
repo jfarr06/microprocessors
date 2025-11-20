@@ -23,14 +23,37 @@ static const music_track menu_track = {
     .loop = true
 };
 
+/* Mode Select music - light, looping selector motif */
+static const music_note mode_select_notes[] = {
+    {C5, 300}, {E5, 300}, {G5, 300}, {C6, 300},
+    {G5, 300}, {E5, 300}, {C5, 300}, {0, 200},
+    {E5, 300}, {G5, 300}, {B5, 300}, {C6, 300},
+    {B5, 300}, {G5, 300}, {E5, 300}, {0, 200},
+    {D5, 300}, {F5, 300}, {A5, 300}, {C6, 300},
+    {A5, 300}, {F5, 300}, {D5, 600}
+};
+
+static const music_track mode_select_track = {
+    .notes = mode_select_notes,
+    .length = sizeof(mode_select_notes) / sizeof(music_note),
+    .loop = true
+};
+
 /* Game music - adventurous, energetic melody */
 static const music_note game_notes[] = {
-    {E4, 300}, {E4, 300}, {0, 150}, {E4, 300},
-    {0, 150}, {C4, 300}, {E4, 600},
-    {G4, 600}, {0, 300}, {G3, 600},
-    {C4, 450}, {0, 150}, {G3, 450}, {0, 150},
-    {E3, 450}, {0, 150}, {A3, 450}, {B3, 450},
-    {AS3_Bb3, 300}, {A3, 600}
+    // Opening: descend into the dungeon (E minor / dark motif)
+    {E4, 300}, {G4, 300}, {0, 150}, {E4, 300},
+    {0, 150}, {D4, 300}, {E4, 600},
+
+    // Ominous sustain then drop an octave
+    {B3, 600}, {0, 300}, {E3, 600},
+
+    // Creeping chromatic / minor movement
+    {G3, 450}, {0, 150}, {F3, 450}, {0, 150},
+    {E3, 450}, {0, 150}, {G3, 450}, {A3, 450},
+
+    // Suspenseful leading tone then resolve down
+    {AS3_Bb3, 300}, {G3, 600}
 };
 
 static const music_track game_track = {
@@ -72,6 +95,11 @@ static const music_track defeat_track = {
 const music_track* get_menu_music(void)
 {
     return &menu_track;
+}
+
+const music_track* get_mode_select_music(void)
+{
+    return &mode_select_track;
 }
 
 const music_track* get_game_music(void)

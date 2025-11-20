@@ -80,9 +80,9 @@ static const uint16_t s_mode_select_option_colours[] = {
 static const uint8_t s_mode_values[3][3] =
 {
     // coins%, time, num coins
-    {50, 120, 15}, // Easy
-    {20, 120, 15}, // Medium
-    {15, 60, 15}   // Hard
+    {65, 120, 10}, // Easy
+    {45, 120, 15}, // Medium
+    {20, 60, 15}   // Hard
 };
 
 SCENE_GET_DEF(menu);
@@ -165,6 +165,8 @@ static void home_menu_on_click()
     s_state = MENU_STATE_MODE_SELECT;
     s_selected_option = 0;
 
+    play_music(get_mode_select_music());
+
     SCENE_F(menu, s_render)();
 }
 
@@ -199,6 +201,8 @@ static void mode_select_on_click()
     case MODE_SELECT_OPTION_RETURN: // Return
         DBG_INFO("Returning to home menu");
         s_state = MENU_STATE_HOME_MENU;
+
+        play_music(get_menu_music());
 
         s_selected_option = 0;
         SCENE_F(menu, s_render)();

@@ -10,7 +10,6 @@
 
 void init_nucleo_f031k6_systick(void)
 {
-    DBG_INFO("Initializing SysTick timer");
     SysTick->LOAD = 48000;
     SysTick->CTRL = 0x7;
     SysTick->VAL = 10;
@@ -34,7 +33,6 @@ void nucleo_f031k6_delay(volatile uint32_t ms)
 
 void init_nucleo_f031k6_pll(void) 
 {
-  DBG_INFO("Initializing PLL clock to 48MHz...");
   // This is potentially a dangerous function as it could
   // result in a system with an invalid clock signal - result: a stuck system
   // Set the PLL up
@@ -61,7 +59,6 @@ void init_nucleo_f031k6_pll(void)
   RCC->CR |= RCC_CR_PLLON;
   // set PLL as system clock source
   RCC->CFGR |= RCC_CFGR_SW_PLL;
-  DBG_INFO("PLL clock initialized");
 }
 
 void init_nucleo_f031k6_hsi16(void) 

@@ -15,6 +15,11 @@
 const music_track* get_menu_music(void);
 
 /**
+ * Get the mode select background music track
+ */
+const music_track* get_mode_select_music(void);
+
+/**
  * Get the game background music track
  */
 const music_track* get_game_music(void);
