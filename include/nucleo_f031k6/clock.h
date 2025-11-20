@@ -29,4 +29,21 @@ void init_nucleo_f031k6_pll(void);
  */
 void init_nucleo_f031k6_hsi16(void);
 
+/**
+ * Delay for a specified number of milliseconds.
+ * 
+ * @param ms Number of milliseconds to delay
+ */
+void nucleo_f031k6_delay(volatile uint16_t ms);
+
+/**
+ * Get the current millisecond count since system start.
+ * 
+ * @return Current millisecond count
+ */
+static inline uint16_t nucleo_f031k6_millis(void)
+{
+    return s_nucleo_f031k6_millis;
+}
+
 #endif

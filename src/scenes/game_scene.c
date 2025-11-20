@@ -15,6 +15,8 @@
 
 #include <scenes.h>
 #include <scenes/game_scene.h>
+#include <music.h>
+#include <music_tracks.h>
 
 #define NUM_OPTIONS_PAUSE (sizeof(s_pause_options)/sizeof(char*))
 
@@ -93,6 +95,9 @@ void SCENE_F(game, on_change)(void)
 
     s_reset_all_states();
     s_state = GAME_STATE_RUNNING;
+
+    /* Start game background music */
+    play_music(get_game_music());
 
     render_character();
     render_current_room();

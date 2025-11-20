@@ -15,6 +15,8 @@
 #include <strings.h>
 #include <infobox.h>
 #include <scenes/menu_scene.h>
+#include <music.h>
+#include <music_tracks.h>
 
 #define NUM_OPTIONS_MODE_SELECT (sizeof(s_mode_select_options)/sizeof(char*))
 
@@ -145,6 +147,9 @@ static void SCENE_F(menu, s_render)()
 void SCENE_F(menu, on_change)()
 {
     s_selected_option = 0;
+
+    /* Start menu background music */
+    play_music(get_menu_music());
 
     SCENE_F(menu, s_render)();
 }
