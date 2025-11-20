@@ -4,12 +4,16 @@
  * @auth: James Farrelly (C24402114)
  */
 
-#include "colours.h"
-#include "rand.h"
-#include "rooms.h"
 #include <stdlib.h>
 
+#include <rand.h>
+#include <rooms.h>
+#include <colours.h>
 #include <display.h>
+
+#include <notes.h>
+#include <music.h>
+#include <music_tracks.h>
 
 #include <scenes.h>
 #include <strings.h>
@@ -146,11 +150,15 @@ void SCENE_F(menu, on_change)()
 {
     s_selected_option = 0;
 
+    play_music(get_menu_music());
+
     SCENE_F(menu, s_render)();
 }
 
 static void home_menu_on_click()
 {
+    play_sound_effect(G5, 100);
+
     s_state = MENU_STATE_MODE_SELECT;
     s_selected_option = 0;
 
@@ -159,6 +167,8 @@ static void home_menu_on_click()
 
 static void mode_select_on_click()
 {
+    play_sound_effect(C5, 500); 
+
     switch (s_selected_option)
     {
     case MODE_SELECT_OPTION_ENDLESS:

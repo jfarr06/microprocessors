@@ -13,6 +13,10 @@
 #include <infobox.h>
 #include <character.h>
 
+#include <notes.h>
+#include <music.h>
+#include <music_tracks.h>
+
 #include <scenes.h>
 #include <scenes/game_scene.h>
 
@@ -63,6 +67,13 @@ static void s_reset_all_states(void)
     init_infobox(); 
 }
 
+static void s_render_game_state(void)
+{
+    render_character();
+    render_current_room();
+    render_infobox();
+}
+
 static void SCENE_F(game, s_render_pause_menu)(void)
 {
     fill_rect(0, 0, SCREEN_W, SCREEN_H, COLOUR_BLACK);
@@ -94,30 +105,29 @@ void SCENE_F(game, on_change)(void)
     s_reset_all_states();
     s_state = GAME_STATE_RUNNING;
 
-    render_character();
-    render_current_room();
-    render_infobox();
+    play_music(get_game_music());
+
+    s_render_game_state();
 }
 
 static void SCENE_F(game, s_on_click_pause_menu)()
 {
+    play_sound_effect(G5, 100);
+
     switch (s_selected_option) 
     {
         case PAUSE_OPTION_RESUME:
             s_state = GAME_STATE_RUNNING;
 
-            render_character();
-            render_current_room();
-            render_infobox();
+            s_render_game_state();
+            play_music(get_game_music());
 
             break;
         case PAUSE_OPTION_RESTART:
             s_reset_all_states();
             s_state = GAME_STATE_RUNNING;
 
-            render_character();
-            render_current_room();
-            render_infobox(); 
+            s_render_game_state();
 
             break;
         case PAUSE_OPTION_HOME_MENU:
@@ -137,6 +147,9 @@ void SCENE_F(game, step)(const input_status* const input)
         case GAME_STATE_RUNNING:
             if (input->trigger & BUTTON_ENTER)
             {
+                stop_music();
+                play_sound_effect(C5, 500); 
+
                 s_selected_option = 0;
                 s_state = GAME_STATE_PAUSED;
                 SCENE_F(game, s_render_pause_menu)();
@@ -156,6 +169,11 @@ void SCENE_F(game, step)(const input_status* const input)
             default:
                 s_state = GAME_STATE_STATUS_SCREEN;
                 SCENE_F(game, render_status_screen)(running_status);
+
+                if (running_status == RUNNING_STATUS_WIN)
+                    play_music(get_victory_music());
+                else
+                    play_music(get_defeat_music());
 
                 break;
             }
@@ -181,7 +199,6 @@ void SCENE_F(game, step)(const input_status* const input)
 
             break;
     }
-
 }
 
 void SCENE_F(game, init)(void) 

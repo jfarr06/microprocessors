@@ -50,9 +50,4 @@ void toggle_nucleo_f031k6_odr_bit(GPIO_TypeDef* port, uint32_t bit, bool status)
  */
 bool get_nucleo_f031k6_idr_bit(GPIO_TypeDef* port, uint32_t bit, uint8_t mode);
 
-/**
- * Delay for the specified amount of milliseconds.
- */
-void nucleo_f031k6_delay(volatile uint16_t ms);
-
 #endif

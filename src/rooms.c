@@ -4,23 +4,26 @@
  * @auth: James Farrelly (C24402114)
  */
 
-#include "colours.h"
-#include "font5x7.h"
-#include "scenes.h"
 #include <stdint.h>
 #include <stdlib.h>
 #include <memory.h>
 
+#include <notes.h>
+#include <music.h>
+
 #include <rand.h>
 #include <rooms.h>
 #include <util.h>
+#include <scenes.h>
+#include <font5x7.h>
+#include <colours.h>
 #include <display.h>
 #include <infobox.h>
 #include <character.h>
 #include <images_data.h>
 
 /* Maximum number of rooms that can be generated */
-#define MAX_NUM_ROOMS 5
+#define MAX_NUM_ROOMS 3
 
 /* Room tile state values */
 #define ROOM_TILE_STATE_WALL 0x0    /* Impassable wall tile */
@@ -185,10 +188,19 @@ static bool is_intersecting_coords(const character* const player, coordinate_set
 
 static bool colliding_with_normal_walls(const character* const player)
 {
-    return is_intersecting_coords(player, s_wall_coordinates[0][0], IMG_wall_width, IMG_wall_height) ||
-           is_intersecting_coords(player, s_wall_coordinates[0][2], IMG_wall_width, IMG_wall_height) ||
-           is_intersecting_coords(player, s_wall_coordinates[2][0], IMG_wall_width, IMG_wall_height) ||
-           is_intersecting_coords(player, s_wall_coordinates[2][2], IMG_wall_width, IMG_wall_height);
+    // Check corner walls (coordinates at [0][0], [0][2], [2][0], [2][2])
+    static const uint8_t corner_positions[4][2] = {{0, 0}, {0, 2}, {2, 0}, {2, 2}};
+    
+    for (uint8_t i = 0; i < 4; i++)
+    {
+        uint8_t row = corner_positions[i][0];
+        uint8_t col = corner_positions[i][1];
+        
+        if (is_intersecting_coords(player, s_wall_coordinates[row][col], IMG_wall_width, IMG_wall_height))
+            return true;
+    }
+    
+    return false;
 }
 
 bool colliding_with_walls(const character* const player)
@@ -331,6 +343,8 @@ void step_rooms()
             inc_infobox_coins();
             fill_circle(COIN_X, COIN_Y, COIN_R, COLOUR_BLACK);
             render_character();
+
+            play_sound_effect(E5, 150);
         }
     } else if ((idx = colliding_with_room_transition(player)) >= 0) // Cannot collide with both a coin and a room transition at the same time.
     {

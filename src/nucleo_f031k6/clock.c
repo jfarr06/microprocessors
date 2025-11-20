@@ -16,17 +16,17 @@ void init_nucleo_f031k6_systick(void)
     __asm(" cpsie i ");
 }
 
-uint16_t s_nucleo_f031k6_millis = 0;
+uint32_t nucleo_f031k6_millis = 0;
 void SysTick_Handler(void)
 {
-    s_nucleo_f031k6_millis++;   
+    nucleo_f031k6_millis++;   
 }
 
-void nucleo_f031k6_delay(volatile uint16_t ms)
+void nucleo_f031k6_delay(volatile uint32_t ms)
 {
-    uint16_t end_time = ms + s_nucleo_f031k6_millis;
+    uint32_t end_time = ms + nucleo_f031k6_millis;
 
-	while(s_nucleo_f031k6_millis != end_time)
+	while(nucleo_f031k6_millis != end_time)
 	    __asm(" wfi "); // sleep
 }
 

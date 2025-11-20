@@ -11,6 +11,7 @@
 #include <util.h>
 #include <rand.h>
 #include <debug.h>
+#include <music.h>
 #include <display.h>
 
 #include <scenes.h>
@@ -30,7 +31,7 @@ int main()
     DBG_INIT();
     DBG_INFO("Initializing...");
 
-    init_nucleo_f031k6_sound();
+    init_music();
     init_display();
     init_io();
 
@@ -45,6 +46,7 @@ int main()
         read_latest_input(&input);
         
         step_scenes(&input);
+        step_music();
 
         nucleo_f031k6_delay(1);
         game_frame++;

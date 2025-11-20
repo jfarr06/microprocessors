@@ -8,6 +8,7 @@
 #include <nucleo_f031k6/clock.h>
 
 #include <util.h>
+#include <music.h>
 #include <strings.h>
 #include <font5x7.h>
 #include <display.h>
@@ -88,6 +89,8 @@ void init_infobox()
 {
     s_infobox_time_tick = s_infobox_time;
     s_infobox_coins_count = 0;
+
+    set_music_tempo_by_time(s_infobox_time_tick);
 }
 
 void step_infobox()
@@ -95,9 +98,11 @@ void step_infobox()
     // Always count down.
     if (s_infobox_time_tick > 0 && s_infobox_coins_count < s_infobox_coins_target)
     {
-        if (s_nucleo_f031k6_millis % 1000 == 0) // Every 1000ms (1s)
+        if (nucleo_f031k6_millis % 1000 == 0) // Every 1000ms (1s)
         {
             s_infobox_time_tick--;
+
+            set_music_tempo_by_time(s_infobox_time_tick);
 
             s_should_render_infobox = true;
         }
@@ -135,4 +140,9 @@ uint8_t get_running_status(void)
     if (s_infobox_time_tick == 0 && s_infobox_coins_count < s_infobox_coins_target) return RUNNING_STATUS_LOSS;
 
     return RUNNING_STATUS_RUN;
+}
+
+inline uint16_t get_infobox_time_remaining(void)
+{
+    return s_infobox_time_tick;
 }

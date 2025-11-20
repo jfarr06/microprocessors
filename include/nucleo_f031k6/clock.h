@@ -12,7 +12,7 @@
 /**
  * The current millis systick value.
  */
-extern uint16_t s_nucleo_f031k6_millis;
+extern uint32_t nucleo_f031k6_millis;
 
 /**
  * Enables SysTick
@@ -28,5 +28,10 @@ void init_nucleo_f031k6_pll(void);
  * Disable PLL clock, enable HSI16 and set current clock.
  */
 void init_nucleo_f031k6_hsi16(void);
+
+/**
+ * Delay for the specified amount of milliseconds.
+ */
+void nucleo_f031k6_delay(volatile uint32_t ms);
 
 #endif
