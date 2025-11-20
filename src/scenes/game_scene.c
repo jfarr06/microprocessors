@@ -132,6 +132,9 @@ static void SCENE_F(game, s_on_click_pause_menu)()
 
 void SCENE_F(game, step)(const input_status* const input)
 {
+    /* Begin double-buffered frame for smoother rendering */
+    display_frame_begin();
+    
     switch (s_state) 
     {
         case GAME_STATE_RUNNING:
@@ -181,7 +184,9 @@ void SCENE_F(game, step)(const input_status* const input)
 
             break;
     }
-
+    
+    /* End frame and present buffered changes */
+    display_frame_end();
 }
 
 void SCENE_F(game, init)(void) 

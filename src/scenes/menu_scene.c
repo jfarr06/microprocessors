@@ -205,6 +205,9 @@ static void mode_select_on_click()
 
 void SCENE_F(menu, step)(const input_status* const input)
 {
+    /* Begin double-buffered frame for smoother rendering */
+    display_frame_begin();
+    
     switch (s_state)
     {
     case MENU_STATE_HOME_MENU:
@@ -214,7 +217,7 @@ void SCENE_F(menu, step)(const input_status* const input)
         break;
     case MENU_STATE_MODE_SELECT:
         if (step_options(input, NUM_OPTIONS_MODE_SELECT, &s_selected_option))
-            s_render_menu_scene();
+            SCENE_F(menu, s_render)();
 
         if (input->trigger & BUTTON_ENTER)
             mode_select_on_click();
@@ -223,6 +226,9 @@ void SCENE_F(menu, step)(const input_status* const input)
     default:
         break;
     }
+    
+    /* End frame and present buffered changes */
+    display_frame_end();
 }
 
 void SCENE_F(menu, init)(void) 

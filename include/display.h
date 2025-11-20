@@ -111,4 +111,16 @@ void print_text(const char *text, uint8_t len, uint8_t scale, uint8_t x, uint8_t
 void print_number(uint16_t number, uint8_t scale, uint8_t x, uint8_t y,
                   uint16_t fgColour, uint16_t bgColour);
 
+/**
+ * Begin a frame for double-buffered rendering.
+ * Call this at the start of each frame to prepare for buffered rendering.
+ */
+void display_frame_begin(void);
+
+/**
+ * End a frame and present all buffered changes to the display.
+ * Call this at the end of each frame to ensure smooth presentation.
+ */
+void display_frame_end(void);
+
 #endif

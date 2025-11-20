@@ -6,6 +6,7 @@
 
 #include <stdint.h>
 #include <stdlib.h>
+#include <string.h>
 
 #include <stm32f031x6.h>
 
@@ -16,6 +17,87 @@
 #include <font5x7.h>
 #include <st7735s.h>
 #include <display.h>
+
+//================================ DOUBLE BUFFERING
+
+/* 
+ * Tile-based double buffering for memory-constrained systems
+ * 
+ * Strategy: Instead of buffering the entire screen (40KB), we use a tile buffer
+ * that holds small regions. The screen is divided into tiles, and each tile
+ * is rendered to the buffer before being sent to the display.
+ * 
+ * Memory usage: 1 tile buffer = 32x32 pixels x 2 bytes = 2KB
+ * This fits comfortably within the 4KB SRAM budget.
+ */
+
+#define TILE_WIDTH  32
+#define TILE_HEIGHT 32
+#define TILE_SIZE   (TILE_WIDTH * TILE_HEIGHT)
+
+/* Tile buffer for double-buffered rendering (~2KB) */
+static uint16_t s_tile_buffer[TILE_SIZE];
+static bool s_frame_active = false;
+static bool s_tile_dirty = false;
+
+/* Current tile being rendered */
+static uint8_t s_current_tile_x = 0;
+static uint8_t s_current_tile_y = 0;
+
+/**
+ * Flush current tile buffer to display
+ */
+static void flush_tile_buffer(void)
+{
+    if (s_tile_dirty)
+    {
+        uint8_t x_start = s_current_tile_x * TILE_WIDTH;
+        uint8_t y_start = s_current_tile_y * TILE_HEIGHT;
+        uint8_t x_end = x_start + TILE_WIDTH - 1;
+        uint8_t y_end = y_start + TILE_HEIGHT - 1;
+        
+        /* Clamp to screen bounds */
+        if (x_end >= SCREEN_W) x_end = SCREEN_W - 1;
+        if (y_end >= SCREEN_H) y_end = SCREEN_H - 1;
+        
+        open_aperture(x_start, y_start, x_end, y_end);
+        st7735s_ramwr();
+        
+        st7735s_bufw_beg();
+        uint16_t tile_pixels = (x_end - x_start + 1) * (y_end - y_start + 1);
+        for (uint16_t i = 0; i < tile_pixels; i++)
+        {
+            st7735s_bufw16(s_tile_buffer[i], 1);
+        }
+        st7735s_bufw_end();
+        
+        s_tile_dirty = false;
+    }
+}
+
+/**
+ * Begin a frame for double-buffered rendering
+ */
+void display_frame_begin(void)
+{
+    s_frame_active = true;
+    s_current_tile_x = 0;
+    s_current_tile_y = 0;
+    s_tile_dirty = false;
+}
+
+/**
+ * End a frame and present all buffered changes
+ */
+void display_frame_end(void)
+{
+    /* Flush any remaining buffered content */
+    flush_tile_buffer();
+    s_frame_active = false;
+    
+    /* Small delay to reduce tearing - allow display refresh to complete */
+    nucleo_f031k6_delay(1);
+}
 
 //================================ DRAWING
 
@@ -30,6 +112,30 @@ void open_aperture(uint8_t x1, uint8_t y1, uint8_t x2, uint8_t y2)
 void fill_rect(uint8_t x, uint8_t y, uint8_t width, uint8_t height, uint16_t colour)
 {
     uint32_t px = height * width;
+    
+    /* 
+     * For tile-sized or smaller rectangles during active frame,
+     * use buffering to reduce tearing
+     */
+    if (s_frame_active && width <= TILE_WIDTH && height <= TILE_HEIGHT && px <= TILE_SIZE)
+    {
+        /* Fill tile buffer */
+        for (uint16_t i = 0; i < px; i++)
+        {
+            s_tile_buffer[i] = colour;
+        }
+        
+        /* Set tile position and mark as dirty */
+        s_current_tile_x = x / TILE_WIDTH;
+        s_current_tile_y = y / TILE_HEIGHT;
+        s_tile_dirty = true;
+        
+        /* Flush immediately for now (can be optimized later) */
+        flush_tile_buffer();
+        return;
+    }
+    
+    /* Default: direct rendering for large operations or non-buffered mode */
     open_aperture(x, y, x + width - 1, y + height - 1);
 
     st7735s_ramwr();
@@ -52,7 +158,59 @@ void put_pixel(uint8_t x, uint8_t y, uint16_t colour)
 
 void put_image(uint8_t x, uint8_t y, uint8_t width, uint8_t height, const uint16_t *imageBuf, uint8_t orientation)
 {
-    open_aperture(x, y, x + width - 1, y + height - 1);
+    uint8_t orig_x = x;
+    uint8_t orig_y = y;
+    uint32_t px = width * height;
+    
+    /*
+     * For sprites that fit in tile buffer during active frame,
+     * use buffered rendering for smoother presentation
+     */
+    if (s_frame_active && px <= TILE_SIZE)
+    {
+        /* Copy sprite to tile buffer with proper orientation */
+        uint16_t buf_idx = 0;
+        for (y = 0; y < height; y++)
+        {
+            uint32_t offsetY = 0;
+            if ((orientation & ORIENTATION_VERTICAL) == 0)
+                offsetY = y * width;
+            else
+                offsetY = (height - (y + 1)) * width;
+
+            for (x = 0; x < width; x++)
+            {
+                uint32_t offsetX = 0;
+                if ((orientation & ORIENTATION_HORIZONTAL) == 0)
+                    offsetX = x;
+                else
+                    offsetX = width - x - 1;
+
+                s_tile_buffer[buf_idx++] = imageBuf[offsetY + offsetX];
+            }
+        }
+        
+        /* Set tile position and flush */
+        s_current_tile_x = orig_x / TILE_WIDTH;
+        s_current_tile_y = orig_y / TILE_HEIGHT;
+        s_tile_dirty = true;
+        
+        /* Direct flush with correct dimensions */
+        open_aperture(orig_x, orig_y, orig_x + width - 1, orig_y + height - 1);
+        st7735s_ramwr();
+        st7735s_bufw_beg();
+        for (uint16_t i = 0; i < px; i++)
+        {
+            st7735s_bufw16(s_tile_buffer[i], 1);
+        }
+        st7735s_bufw_end();
+        
+        s_tile_dirty = false;
+        return;
+    }
+    
+    /* Default: direct rendering for large sprites or non-buffered mode */
+    open_aperture(orig_x, orig_y, orig_x + width - 1, orig_y + height - 1);
     st7735s_ramwr();
     st7735s_bufw_beg();
 
