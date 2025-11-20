@@ -17,6 +17,7 @@
 #include <scenes/game_scene.h>
 #include <music.h>
 #include <music_tracks.h>
+#include <notes.h>
 
 #define NUM_OPTIONS_PAUSE (sizeof(s_pause_options)/sizeof(char*))
 
@@ -106,6 +107,9 @@ void SCENE_F(game, on_change)(void)
 
 static void SCENE_F(game, s_on_click_pause_menu)()
 {
+    /* Play menu select sound effect */
+    play_sound_effect(G5, 100);
+    
     switch (s_selected_option) 
     {
         case PAUSE_OPTION_RESUME:
@@ -161,6 +165,12 @@ void SCENE_F(game, step)(const input_status* const input)
             default:
                 s_state = GAME_STATE_STATUS_SCREEN;
                 SCENE_F(game, render_status_screen)(running_status);
+                
+                /* Play victory or defeat music */
+                if (running_status == RUNNING_STATUS_WIN)
+                    play_music(get_victory_music());
+                else
+                    play_music(get_defeat_music());
 
                 break;
             }

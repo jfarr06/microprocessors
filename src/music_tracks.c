@@ -37,6 +37,36 @@ static const music_track game_track = {
     .loop = 1
 };
 
+/* Victory music - triumphant, celebratory melody */
+static const music_note victory_notes[] = {
+    {C5, 200}, {C5, 200}, {C5, 200}, {C5, 600},
+    {GS4, 600}, {AS4, 600},
+    {C5, 200}, {AS4, 200}, {C5, 800},
+    {G5, 200}, {F5, 200}, {E5, 200}, {D5, 200},
+    {C5, 1200}
+};
+
+static const music_track victory_track = {
+    .notes = victory_notes,
+    .length = sizeof(victory_notes) / sizeof(music_note),
+    .loop = 0  /* Play once */
+};
+
+/* Defeat music - somber, descending melody */
+static const music_note defeat_notes[] = {
+    {C5, 400}, {B4, 400}, {AS4, 400}, {A4, 400},
+    {GS4, 400}, {G4, 400}, {FS4, 400}, {F4, 600},
+    {0, 200},
+    {F4, 300}, {E4, 300}, {DS4, 600},
+    {D4, 1200}
+};
+
+static const music_track defeat_track = {
+    .notes = defeat_notes,
+    .length = sizeof(defeat_notes) / sizeof(music_note),
+    .loop = 0  /* Play once */
+};
+
 const music_track* get_menu_music(void)
 {
     return &menu_track;
@@ -45,4 +75,14 @@ const music_track* get_menu_music(void)
 const music_track* get_game_music(void)
 {
     return &game_track;
+}
+
+const music_track* get_victory_music(void)
+{
+    return &victory_track;
+}
+
+const music_track* get_defeat_music(void)
+{
+    return &defeat_track;
 }

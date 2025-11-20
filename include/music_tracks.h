@@ -19,4 +19,14 @@ const music_track* get_menu_music(void);
  */
 const music_track* get_game_music(void);
 
+/**
+ * Get the victory music track (plays once)
+ */
+const music_track* get_victory_music(void);
+
+/**
+ * Get the defeat music track (plays once)
+ */
+const music_track* get_defeat_music(void);
+
 #endif // MUSIC_TRACKS_H_

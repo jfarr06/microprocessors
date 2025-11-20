@@ -17,6 +17,7 @@
 #include <scenes/menu_scene.h>
 #include <music.h>
 #include <music_tracks.h>
+#include <notes.h>
 
 #define NUM_OPTIONS_MODE_SELECT (sizeof(s_mode_select_options)/sizeof(char*))
 
@@ -156,6 +157,9 @@ void SCENE_F(menu, on_change)()
 
 static void home_menu_on_click()
 {
+    /* Play menu select sound effect */
+    play_sound_effect(G5, 100);
+    
     s_state = MENU_STATE_MODE_SELECT;
     s_selected_option = 0;
 
@@ -164,6 +168,9 @@ static void home_menu_on_click()
 
 static void mode_select_on_click()
 {
+    /* Play menu select sound effect */
+    play_sound_effect(G5, 100);
+    
     switch (s_selected_option)
     {
     case MODE_SELECT_OPTION_ENDLESS:

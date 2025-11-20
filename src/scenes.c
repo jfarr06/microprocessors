@@ -7,6 +7,8 @@
 #include <scenes.h>
 #include <strings.h>
 #include <display.h>
+#include <music.h>
+#include <notes.h>
 
 SCENE_GET_DEF(current); // psuedo scene
 
@@ -41,6 +43,9 @@ bool step_options(const input_status* const input, uint8_t num_options, uint8_t*
         else
             --*selected_option;
 
+        /* Play navigation sound effect */
+        play_sound_effect(C5, 50);
+
         return true;
     } else if (input->trigger & BUTTON_DOWN)
     {
@@ -48,6 +53,9 @@ bool step_options(const input_status* const input, uint8_t num_options, uint8_t*
             *selected_option = 0;
         else
             ++*selected_option;
+
+        /* Play navigation sound effect */
+        play_sound_effect(C5, 50);
 
         return true;
     }
