@@ -9,6 +9,7 @@
 #include <rooms.h>
 #include <display.h>
 #include <images_data.h>
+#include <debug.h>
 
 #include <character.h>
 
@@ -38,6 +39,7 @@ img: put_image(s_char.x, s_char.y, s_char.width, s_char.height, s_char.img_data,
 
 void init_character(void)
 {
+    DBG_INFO("Initializing character at position (50, 50)");
     SET_CHAR_IMG(char_front);
 
     s_char.orientation = 0;
@@ -137,6 +139,7 @@ void step_character(const input_status* const input)
 
         if (colliding_with_walls(&s_char))
         {
+            DBG_TRACE("Character collision detected, reverting position");
             if (vmoved)
             {
                 if (vdirection) s_char.y--;
