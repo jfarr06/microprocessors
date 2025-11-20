@@ -4,6 +4,7 @@
 .ccls
 compile_commands.json
 .cache
+_codeql_detected_source_root
 
 .vscode/*
 !.vscode/settings.json
