@@ -63,6 +63,13 @@ static void s_reset_all_states(void)
     init_infobox(); 
 }
 
+static void s_render_game_state(void)
+{
+    render_character();
+    render_current_room();
+    render_infobox();
+}
+
 static void SCENE_F(game, s_render_pause_menu)(void)
 {
     fill_rect(0, 0, SCREEN_W, SCREEN_H, COLOUR_BLACK);
@@ -94,9 +101,7 @@ void SCENE_F(game, on_change)(void)
     s_reset_all_states();
     s_state = GAME_STATE_RUNNING;
 
-    render_character();
-    render_current_room();
-    render_infobox();
+    s_render_game_state();
 }
 
 static void SCENE_F(game, s_on_click_pause_menu)()
@@ -106,18 +111,14 @@ static void SCENE_F(game, s_on_click_pause_menu)()
         case PAUSE_OPTION_RESUME:
             s_state = GAME_STATE_RUNNING;
 
-            render_character();
-            render_current_room();
-            render_infobox();
+            s_render_game_state();
 
             break;
         case PAUSE_OPTION_RESTART:
             s_reset_all_states();
             s_state = GAME_STATE_RUNNING;
 
-            render_character();
-            render_current_room();
-            render_infobox(); 
+            s_render_game_state();
 
             break;
         case PAUSE_OPTION_HOME_MENU:

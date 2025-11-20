@@ -81,75 +81,62 @@ void init_spi()
     F031K6_UNUSED(_dummy_sr);
 }
 
-//====== RST
-
-// Values (used for comp)
+// Pin control state tracking
 static volatile bool s_rst_val = false;
 static volatile bool s_cs_val = false;
 static volatile bool s_dc_val = false;
 
+/**
+ * Generic pin control function to set a pin high or low with state tracking
+ * @param current_val Pointer to the current state variable
+ * @param target_val The target state (true = high, false = low)
+ * @param pin The GPIO pin to control
+ * @param pin_name Name of the pin for debug logging
+ */
+static void set_pin(volatile bool* current_val, bool target_val, uint16_t pin, const char* pin_name)
+{
+    if (*current_val == target_val) return;
+    *current_val = target_val;
+
+    DBG_TRACE("Set %s %s", pin_name, target_val ? "high" : "low");
+
+    toggle_nucleo_f031k6_odr_bit(GPIOA, pin, target_val);
+}
+
+//====== RST
+
 static void rst_lo()
 {
-    if (!s_rst_val) return;
-    s_rst_val = false;
-
-    DBG_TRACE("Set RST low");
-
-    toggle_nucleo_f031k6_odr_bit(GPIOA, RST, false);
+    set_pin(&s_rst_val, false, RST, "RST");
 }
 
 static void rst_hi()
 {
-    if (s_rst_val) return;
-    s_rst_val = true;
-
-    DBG_TRACE("Set RST high");    
-
-    toggle_nucleo_f031k6_odr_bit(GPIOA, RST, true);
+    set_pin(&s_rst_val, true, RST, "RST");
 }
 
 //====== CS
 
 static void cs_lo()
 {
-    if (!s_cs_val) return;
-    s_cs_val = false; 
-    
-    DBG_TRACE("Set CS low");    
- 
-    toggle_nucleo_f031k6_odr_bit(GPIOA, CS, false);
+    set_pin(&s_cs_val, false, CS, "CS");
 }
 
 static void cs_hi()
 {
-    if (s_cs_val) return;
-    s_cs_val = true; 
-
-    DBG_TRACE("Set CS high");    
- 
-    toggle_nucleo_f031k6_odr_bit(GPIOA, CS, true);
+    set_pin(&s_cs_val, true, CS, "CS");
 }
 
 //======= DC
 
 static void dc_lo()
 {
-    if (!s_dc_val) return;
-    s_dc_val = false;
- 
-    DBG_TRACE("Set D/C low");    
- 
-    toggle_nucleo_f031k6_odr_bit(GPIOA, DC, false);
+    set_pin(&s_dc_val, false, DC, "D/C");
 }
 
 static void dc_hi()
 {
-    if (s_dc_val) return;
-    s_dc_val = true; 
-
-    DBG_TRACE("Set D/C high");    
-
-    toggle_nucleo_f031k6_odr_bit(GPIOA, DC, true);
+    set_pin(&s_dc_val, true, DC, "D/C");
 }
 
 void st7735s_bufw_beg(void)

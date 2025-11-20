@@ -185,10 +185,19 @@ static bool is_intersecting_coords(const character* const player, coordinate_set
 
 static bool colliding_with_normal_walls(const character* const player)
 {
-    return is_intersecting_coords(player, s_wall_coordinates[0][0], IMG_wall_width, IMG_wall_height) ||
-           is_intersecting_coords(player, s_wall_coordinates[0][2], IMG_wall_width, IMG_wall_height) ||
-           is_intersecting_coords(player, s_wall_coordinates[2][0], IMG_wall_width, IMG_wall_height) ||
-           is_intersecting_coords(player, s_wall_coordinates[2][2], IMG_wall_width, IMG_wall_height);
+    // Check corner walls (coordinates at [0][0], [0][2], [2][0], [2][2])
+    static const uint8_t corner_positions[4][2] = {{0, 0}, {0, 2}, {2, 0}, {2, 2}};
+    
+    for (uint8_t i = 0; i < 4; i++)
+    {
+        uint8_t row = corner_positions[i][0];
+        uint8_t col = corner_positions[i][1];
+        
+        if (is_intersecting_coords(player, s_wall_coordinates[row][col], IMG_wall_width, IMG_wall_height))
+            return true;
+    }
+    
+    return false;
 }
 
 bool colliding_with_walls(const character* const player)

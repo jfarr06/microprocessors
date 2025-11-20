@@ -95,6 +95,19 @@ void print_text(const char *text, uint8_t len, uint8_t scale, uint8_t x, uint8_t
 
     uint16_t textBox[FONT_WIDTH * scale * FONT_HEIGHT * scale];
 
+    // Helper function to set scaled pixels in textbox
+    void set_scaled_pixel(uint16_t* textBox, uint8_t row, uint8_t col, uint8_t scale, uint16_t colour)
+    {
+        textBox[((row*scale) * FONT_WIDTH * scale) + (col*scale)] = colour;
+        
+        if (scale > 1) 
+        {
+            textBox[((row*scale) * FONT_WIDTH * scale) + (col*scale) + 1] = colour;
+            textBox[(((row*scale) + 1) * FONT_WIDTH * scale) + (col*scale)] = colour;
+            textBox[(((row*scale) + 1) * FONT_WIDTH * scale) + (col*scale) + 1] = colour;
+        }
+    }
+
     for (uint8_t i = 0; i < len; i++)
     {
         DBG_TRACE("Writing character %c", text[i]);
@@ -107,28 +120,8 @@ void print_text(const char *text, uint8_t len, uint8_t scale, uint8_t x, uint8_t
             uint8_t row = 0;
             while (row < FONT_HEIGHT)
             {
-                if (charCode[col] & (1 << row))
-                {
-                    textBox[((row*scale) * FONT_WIDTH * scale) + (col*scale)] = fgColour;
-
-                    if (scale > 1) 
-                    {
-                        textBox[((row*scale) * FONT_WIDTH * scale) + (col*scale) + 1] = fgColour;
-                        textBox[(((row*scale) + 1) * FONT_WIDTH * scale) + (col*scale)] = fgColour;
-                        textBox[(((row*scale) + 1) * FONT_WIDTH * scale) + (col*scale) + 1] = fgColour;
-                    }
-                }
-                else
-                {
-                    textBox[((row*scale) * FONT_WIDTH * scale) + (col*scale)] = bgColour;
-
-                    if (scale > 1) 
-                    {
-                        textBox[((row*scale) * FONT_WIDTH * scale) + (col*scale) + 1] = bgColour;
-                        textBox[(((row*scale) + 1) * FONT_WIDTH * scale) + (col*scale)] = bgColour;
-                        textBox[(((row*scale) + 1) * FONT_WIDTH * scale) + (col*scale) + 1] = bgColour;
-                    }
-                }
+                uint16_t colour = (charCode[col] & (1 << row)) ? fgColour : bgColour;
+                set_scaled_pixel(textBox, row, col, scale, colour);
 
                 row++;
             }
