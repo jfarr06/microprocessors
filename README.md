@@ -4,7 +4,10 @@ All code from the TU857 Y2 microprocessors project (CMPU1013)
 
 **A dungeon crawler game for STM32 Nucleo F031K6 with ST7735S display.**
 
-Features background music with audio mixing - different tracks play in menu and game scenes, and sound effects play when collecting coins!
+Features complete audio system with background music, dynamic tempo adjustment, and sound effects:
+- Background music for menu, gameplay, victory, and defeat
+- Music speeds up as timer counts down for added urgency
+- Sound effects for coin collection and menu navigation
 
 📖 **For detailed technical documentation, see [SUMMARY.md](SUMMARY.md)**
 

@@ -146,8 +146,9 @@ Background music and audio mixing:
 - **Non-blocking Playback**: Timer-based advancement without blocking game loop
 - **Looping Support**: Tracks can loop continuously or play once
 - **Sound Effects API**: Play short sound effects that temporarily override music
-- **Music Tracks** (`music_tracks.c`): Pre-defined melodies for menu and game scenes
+- **Music Tracks** (`music_tracks.c`): Pre-defined melodies for menu, game, victory, and defeat scenes
 - **Dynamic Tempo**: Music speeds up as countdown timer approaches zero (5 speed tiers from 100% to 200%)
+- **Menu Sound Effects**: Navigation (C5, 50ms) and selection (G5, 100ms) feedback sounds
 
 #### 9. Utility Systems
 
@@ -287,7 +288,8 @@ microprocessors/
 - PWM-based tone generation
 - Musical note frequency definitions (C0-C8)
 - Background music system with audio mixing
-- Looping music tracks for menu and game scenes
+- Music tracks: menu (looping), game (looping), victory (one-shot), defeat (one-shot)
+- Sound effects: coin collection, menu navigation, menu selection
 - Sound effect prioritization over background music
 - Non-blocking music playback using timer-based advancement
 - Dynamic tempo adjustment: music speeds up as countdown timer approaches zero to create urgency
