@@ -68,6 +68,7 @@ Player character with sprite animation:
   - `char_back_mov`: Facing up (moving)
   - `char_right`: Facing right (idle)
   - `char_right_mov`: Facing right (moving)
+  - Note: `char_left` and `char_left_mov` assets exist but are unused; left-facing uses horizontal flip of char_right sprites
   
 - **Movement System:**
   - 4-directional movement (up, down, left, right)
@@ -240,9 +241,9 @@ microprocessors/
 ```
 
 ### Code Statistics
-- **Total lines of code:** ~1,973 lines (C source only)
-- **Source files:** 16 C files
-- **Header files:** 23 H files
+- **Total lines of code:** ~2,372 lines (C source only)
+- **Source files:** 17 C files
+- **Header files:** 24 H files
 - **Primary language:** C (with some inline assembly if needed)
 
 ## Key Features
@@ -380,7 +381,7 @@ This project demonstrates:
 **Course:** TU857 Y2 Microprocessors (CMPU1013)  
 **Target:** STM32 Nucleo F031K6  
 
-This project is educational in nature and developed as coursework for Trinity University Dublin.
+This project is educational in nature and developed as coursework for Technological University Dublin (TU Dublin).
 
 ---
 
