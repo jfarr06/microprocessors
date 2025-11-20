@@ -43,6 +43,6 @@ void render_character(void);
  * Get pointer to the global character instance
  * @return Pointer to the character structure
  */
-character* get_character(void);
+character* const get_character(void);
 
 #endif

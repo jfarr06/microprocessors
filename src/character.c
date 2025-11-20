@@ -4,13 +4,11 @@
  * @auth: James Farrelly (C24402114)
  */
 
-#include <stdlib.h>
-
 #include <io.h>
 #include <util.h>
-#include <images.h>
-#include <display.h>
 #include <rooms.h>
+#include <display.h>
+#include <images_data.h>
 
 #include <character.h>
 
@@ -27,13 +25,13 @@
 
 static character s_char;
 
-character* get_character(void) { return &s_char; }
+character* const get_character(void) { return &s_char; }
 
 void render_character(void)
 {
     if (s_char.oldx == s_char.x && s_char.oldy == s_char.y) goto img;
 
-    fill_rect(s_char.oldx, s_char.oldy, s_char.width, s_char.height, 0x0000);
+    fill_rect(s_char.oldx, s_char.oldy, s_char.width, s_char.height, COLOUR_BLACK);
 
 img: put_image(s_char.x, s_char.y, s_char.width, s_char.height, s_char.img_data, s_char.orientation);
 }
@@ -44,8 +42,6 @@ void init_character(void)
 
     s_char.orientation = 0;
     s_char.x = s_char.y = 50;
-
-    render_character();
 }
 
 void step_character(const input_status* const input)
@@ -139,7 +135,7 @@ void step_character(const input_status* const input)
             moving = false;
         }
 
-        if (colliding_with_walls())
+        if (colliding_with_walls(&s_char))
         {
             if (vmoved)
             {

@@ -8,6 +8,7 @@
 #define RAND_H_
 
 #include <stdint.h>
+#include <stdbool.h>
 
 //=================== RANDOM
 
@@ -23,5 +24,13 @@ void init_rand(void);
  * @param hi The higher bound.
  */ 
 uint32_t sys_rand(uint32_t lo, uint32_t hi);
+
+/**
+ * Produce a random chance where this function will return true.
+ *
+ * @param percent The percentage.
+ * @return True in percent chance hit, else false.
+ */
+bool rand_chance(uint8_t percent);
 
 #endif

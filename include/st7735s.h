@@ -111,6 +111,11 @@
 void init_st7735s(void);
 
 /**
+ * Begins a bufw transaction.
+ */
+void st7735s_bufw_beg(void);
+
+/**
  * Buffer out n amount of data to SPI port.
  *
  * @param data The data.

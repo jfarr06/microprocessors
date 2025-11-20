@@ -7,22 +7,17 @@
 #ifndef ROOMS_H_
 #define ROOMS_H_
 
+#include "character.h"
 #include <stdint.h>
 #include <stdbool.h>
+
+#define ROOM_SIZE_X 3
+#define ROOM_SIZE_Y 3
 
 /**
  * 3x3 grid representing room tile layout
  */
-typedef uint8_t room_structure_t[3][3];
-
-/**
- * Coordinate set defining a rectangular area with optional image data
- */
-typedef struct coordinate_set
-{
-    uint8_t x, y, w, h;             /* Position and dimensions */
-    const uint16_t* img_data;       /* Optional image data pointer */
-} coordinate_set_t;
+typedef uint8_t room_structure_t[ROOM_SIZE_X][ROOM_SIZE_Y];
 
 /**
  * Simple 2D coordinate pair
@@ -32,12 +27,17 @@ typedef struct coordinate_set_2x2
     uint8_t x, y;                   /* X and Y coordinates */
 } coordinate_set_2x2_t;
 
+#define MAX_TRANSITION_POINTS    4 /* Max number of transition points */
+#define MAX_WALL_COLLISION_SETS  3 /* Max number of collision sets for additional walls. */
+#define MAX_TRANS_COLLISION_SETS 4 /* Max number of collision sets for transition points */
+
+typedef const coordinate_set_2x2_t const_coordinate_set_2x2_t;
+
 /**
  * Room structure containing layout and collision data
  */
 typedef struct room {
     uint8_t index;                  /* Room index identifier */
-    
     room_structure_t structure;     /* 3x3 tile grid layout */
     
     /*
@@ -45,27 +45,14 @@ typedef struct room {
      * Index: 0=top, 1=left, 2=right, 3=bottom
      * Complement: 0=3, 1=2, 2=1, 3=0
      */
-    struct room* transition_points[4];
+    int8_t transition_points[MAX_TRANSITION_POINTS];
     
     uint8_t wall_collision_set_len; /* Number of wall collision areas */
-    
-    /*
-     * Wall collision areas (max 3 can be present)
-     */
-    coordinate_set_t wall_collision_sets[3];
+    coordinate_set_2x2_t wall_collision_sets[MAX_WALL_COLLISION_SETS]; /* Wall collision areas (max 3 can be present) */
     
     uint8_t trans_collision_set_len; /* Number of transition collision areas */
-    coordinate_set_t trans_collision_sets[4]; /* Transition collision areas */
+    coordinate_set_2x2_t trans_collision_sets[MAX_TRANS_COLLISION_SETS]; /* Transition collision areas */
 } room;
-
-/* Maximum number of rooms that can be generated */
-#define MAX_NUM_ROOMS 5
-
-/* Room tile state values */
-#define ROOM_TILE_STATE_WALL 0x0    /* Impassable wall tile */
-#define ROOM_TILE_STATE_HALL 0x1    /* Walkable hallway tile */
-#define ROOM_TILE_STATE_TRAN 0x2    /* Transition point to another room */
-#define ROOM_TILE_STATE_COIN 0x3    /* Collectible coin tile */
 
 /**
  * Initialize the room system and generate initial room
@@ -78,9 +65,21 @@ void init_rooms(void);
 void step_rooms(void);
 
 /**
+ * Renders the current room
+ */
+void render_current_room(void);
+
+/**
  * Check if character is colliding with any walls
  * @return true if collision detected, false otherwise
  */
-bool colliding_with_walls(void);
+bool colliding_with_walls(const character* const player);
+
+/**
+ * Sets the generation chance of a coin.
+ *
+ * @param percentage The percentage.
+ */
+void set_coin_generation_chance(uint8_t percentage);
 
 #endif // !ROOMS_H_

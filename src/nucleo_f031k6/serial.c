@@ -35,8 +35,8 @@
                         USART_ICR_CMCF   | \
                         USART_ICR_WUCF )
 
-const uint32_t USART_CLOCK_SPEED = 48000000; // 48MHz
-const uint32_t USART_BAUD_RATE = 9600;
+#define USART_CLOCK_SPEED 48000000 // 48MHz
+#define USART_BAUD_RATE   9600
 
 void init_nucleo_f031k6_serial(void) 
 {

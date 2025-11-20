@@ -10,28 +10,16 @@
 #include <stdint.h>
 #include <stdbool.h>
 
+#include <font5x7.h>
+#include <colours.h>
+
 /* Screen dimensions */
 #define SCREEN_W 128
 #define SCREEN_H 160
 
-/* Legacy orientation flags (deprecated - use ORIENTATION_* bit masks instead) */
-#define HORIZONAL_ORIENTATION_LEFT  0
-#define HORIZONAL_ORIENTATION_RIGHT 1
-#define VERTICAL_ORIENTATION_DOWN 0
-#define VERTICAL_ORIENTATION_UP   1
-
 /* Orientation bit masks for sprite rendering */
 #define ORIENTATION_HORIZONTAL (0x1U << 0) /* Bit 0: horizontal orientation (0=left, 1=right) */
 #define ORIENTATION_VERTICAL   (0x1U << 1) /* Bit 1: vertical orientation (0=down, 1=up) */
-
-/**
- * Convert 8-bit RGB values to 16-bit RGB565 color format
- * @param r Red component (0-255)
- * @param g Green component (0-255)
- * @param b Blue component (0-255)
- * @return 16-bit RGB565 color value
- */
-#define RGB16(r, g, b) ((g >> 5) | (g & 7) << 13 | (r >> 3) << 8 | (b >> 3) << 3)
 
 /**
  * Initialize the ST7735S display controller

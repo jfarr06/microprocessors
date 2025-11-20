@@ -4,105 +4,135 @@
  * @auth: James Farrelly (C24402114)
  */
 
+#include "colours.h"
+#include "rand.h"
+#include "rooms.h"
 #include <stdlib.h>
 
 #include <display.h>
-#include <font5x7.h>
 
 #include <scenes.h>
+#include <strings.h>
 #include <infobox.h>
 #include <scenes/menu_scene.h>
 
-SCENE_GET_DEF(menu);
-
-static const char* s_home_menu_options[] = {"Play", "About"};
-static const int s_home_menu_option_sizes[] = {4, 5};
-static const uint16_t s_home_menu_option_colours[] = {0xffff, 0xffff};
-
-static const char* s_mode_select_options[] = {"Easy", "Medium", "Hard", "Endless", "Random", "Return"};
-static const int s_mode_select_option_sizes[] = {4, 6, 4, 7, 6, 6};
-static const uint16_t s_mode_select_option_colours[] = { 
-    RGB16(0x00, 0xff, 0x00), 
-    RGB16(0xff, 0xff, 0x00), 
-    RGB16(0xff, 0x00, 0x00), 
-    RGB16(0xfc, 0x7b, 0x03),
-    RGB16(0x03, 0xdb, 0xfc), 
-    0xffff 
-};
-
-#define NUM_OPTIONS_HOME_MENU   (sizeof(s_home_menu_options)/sizeof(char*))
 #define NUM_OPTIONS_MODE_SELECT (sizeof(s_mode_select_options)/sizeof(char*))
 
-#define STATUS_HOME_MENU   0x0
-#define STATUS_MODE_SELECT 0x1
-#define STATUS_ABOUT       0x2
+#define MENU_STATE_HOME_MENU   0x0
+#define MENU_STATE_MODE_SELECT 0x1
 
-static uint8_t s_status = STATUS_HOME_MENU;
+#define TITLE_SCALE       2
+#define PLAY_SCALE        2
+#define MODE_SELECT_SCALE 2
+#define MODE_DESC_SCALE   1
+
+#define TITLE_OFFSET_X CHARS(1)+10
+#define PLAY_OFFSET_X  CHARS(2)-(FONT_WIDTH/2)+4
+
+#define TITLE_TOP_OFFSET_Y           4
+#define TITLE_BOTTOM_OFFSET_Y        LINE_BIG(1) + TITLE_TOP_OFFSET_Y*2
+#define PLAY_OFFSET_Y                LINE_BIG(5)
+#define MODE_SELECT_OPTIONS_OFFSET_Y LINE_BIG(2)
+#define MODE_DESC_OFFSET_Y(x)        LINE_BIG(NUM_OPTIONS_MODE_SELECT+2) + LINE(1) + NUM_OPTIONS_MODE_SELECT+2 + (LINE(1) + 2)*x
+
+#define TITLE_INNER_W SCREEN_W-1
+#define TITLE_INNER_H LINE_BIG(2)+(TITLE_TOP_OFFSET_Y*2)+2
+
+#define TITLE_INNER_DIMENSIONS TITLE_INNER_W, TITLE_INNER_H
+
+#define MODE_SELECT_OPTION_EASY    0x0
+#define MODE_SELECT_OPTION_MEDIUM  0x1
+#define MODE_SELECT_OPTION_HARD    0x2
+#define MODE_SELECT_OPTION_ENDLESS 0x3
+#define MODE_SELECT_OPTION_RANDOM  0x4
+#define MODE_SELECT_OPTION_RETURN  0x5
+
+static const char* s_mode_select_options[] = {
+    STR_MODE_SELECT_EASY, 
+    STR_MODE_SELECT_MEDIUM,
+    STR_MODE_SELECT_HARD, 
+    STR_MODE_SELECT_ENDLESS,
+    STR_MODE_SELECT_RANDOM,
+    STR_MODE_SELECT_RETURN
+};
+static const uint8_t s_mode_select_option_sizes[] = {
+    STR_MODE_SELECT_EASY_LEN, 
+    STR_MODE_SELECT_MEDIUM_LEN,
+    STR_MODE_SELECT_HARD_LEN, 
+    STR_MODE_SELECT_ENDLESS_LEN, 
+    STR_MODE_SELECT_RANDOM_LEN,
+    STR_MODE_SELECT_RETURN_LEN
+};
+static const uint16_t s_mode_select_option_colours[] = { 
+    COLOUR_LIME, 
+    COLOUR_YELLOW, 
+    COLOUR_RED, 
+    COLOUR_ORANGE,
+    COLOUR_CYAN, 
+    COLOUR_WHITE
+};
+
+static const uint8_t s_mode_values[3][3] =
+{
+    // coins%, time, num coins
+    {50, 120, 15}, // Easy
+    {20, 120, 15}, // Medium
+    {15, 60, 15}   // Hard
+};
+
+SCENE_GET_DEF(menu);
+static uint8_t s_state = MENU_STATE_HOME_MENU;
 static uint8_t s_selected_option = 0;
 
-#define LINE(x) ((x) * FONT_HEIGHT)
-
-#define LINE_BIG(x) (LINE(x) * 2)
-#define CHARS(x) ((x) * FONT_WIDTH * 2)
-
-#define MODE_DESC_OFFSET LINE_BIG(NUM_OPTIONS_MODE_SELECT) + LINE(1) + NUM_OPTIONS_MODE_SELECT+2
-
-void render_base_options(const char* options[], const int sizes[], const uint16_t colours[], int num_options, uint8_t yOffset)
-{
-    for (uint8_t i = 0; i < num_options; i++)
-    {
-        if (i == s_selected_option)
-            print_text(">", 1, 2, 0, LINE_BIG(i) + yOffset + i*2, 0xffff, 0x0000);
-
-        print_text(options[i], sizes[i], 2, CHARS(1), LINE_BIG(i) + yOffset + i*2, colours[i], 0x0000);
-    }
-}
-
-void SCENE_F(menu, render)()
+static void SCENE_F(menu, s_render)()
 {
     fill_rect(0, 0, SCREEN_W, SCREEN_H, 0x0000);
 
-    switch (s_status)
+    switch (s_state)
     {
-    case STATUS_HOME_MENU:
-        render_base_options(s_home_menu_options, s_home_menu_option_sizes, s_home_menu_option_colours, NUM_OPTIONS_HOME_MENU, 0x0);
+    case MENU_STATE_HOME_MENU:
+        draw_rect(0, 0, TITLE_INNER_DIMENSIONS, COLOUR_WHITE);
+
+        print_text(STRING(MENU_TITLE_TOP), TITLE_SCALE, TITLE_OFFSET_X, TITLE_TOP_OFFSET_Y, COLOUR_RED, COLOUR_BLACK);
+        print_text(STRING(MENU_TITLE_BOTTOM), TITLE_SCALE, TITLE_OFFSET_X, TITLE_BOTTOM_OFFSET_Y, COLOUR_WHITE, COLOUR_BLACK);
+
+        print_text(STRING(MENU_PLAY), PLAY_SCALE, PLAY_OFFSET_X, PLAY_OFFSET_Y, COLOUR_WHITE, COLOUR_BLACK);
 
         break;
-    case STATUS_MODE_SELECT:
-        render_base_options(s_mode_select_options, s_mode_select_option_sizes, s_mode_select_option_colours, NUM_OPTIONS_MODE_SELECT, 0x0);
+    case MENU_STATE_MODE_SELECT:
+        print_text(STRING(MODE_SELECT_TITLE), MODE_SELECT_SCALE, 0, 0, COLOUR_WHITE, COLOUR_BLACK);
+        render_options(s_mode_select_options, s_mode_select_option_sizes, s_mode_select_option_colours, NUM_OPTIONS_MODE_SELECT, s_selected_option, 0x0, MODE_SELECT_OPTIONS_OFFSET_Y);
 
         switch (s_selected_option)
         {
-        case 0: // Easy
-            print_text("Lots of coins,", 14, 1, 0, MODE_DESC_OFFSET, 0xffff, 0x0000);
-            print_text("lots of time!", 13, 1, 0, MODE_DESC_OFFSET+LINE(1)+2, 0xffff, 0x0000);
+        case MODE_SELECT_OPTION_EASY: // Easy
+            print_text(STRING(DESC_LOTS_OF_COINS), MODE_DESC_SCALE, 0, MODE_DESC_OFFSET_Y(0), COLOUR_WHITE, COLOUR_BLACK);
+            print_text(STRING(DESC_LOTS_OF_TIME), MODE_DESC_SCALE, 0, MODE_DESC_OFFSET_Y(1), COLOUR_WHITE, COLOUR_BLACK);
 
             break;
-        case 1: // Medium
-            print_text("Reduced coins,", 14, 1, 0, MODE_DESC_OFFSET, 0xffff, 0x0000);
-            print_text("lots of time!", 13, 1, 0, MODE_DESC_OFFSET+LINE(1)+2, 0xffff, 0x0000);
+        case MODE_SELECT_OPTION_MEDIUM: // Medium
+            print_text(STRING(DESC_REDUCED_COINS), MODE_DESC_SCALE, 0, MODE_DESC_OFFSET_Y(0), COLOUR_WHITE, COLOUR_BLACK);
+            print_text(STRING(DESC_LOTS_OF_TIME), MODE_DESC_SCALE, 0, MODE_DESC_OFFSET_Y(1), COLOUR_WHITE, COLOUR_BLACK);
 
             break;
-        case 2: // Hard
-            print_text("Reduced coins,", 14, 1, 0, MODE_DESC_OFFSET, 0xffff, 0x0000);
-            print_text("reduced time!", 13, 1, 0, MODE_DESC_OFFSET+LINE(1)+2, 0xffff, 0x0000);
+        case MODE_SELECT_OPTION_HARD: // Hard
+            print_text(STRING(DESC_REDUCED_COINS), MODE_DESC_SCALE, 0, MODE_DESC_OFFSET_Y(0), COLOUR_WHITE, COLOUR_BLACK);
+            print_text(STRING(DESC_REDUCED_TIME), MODE_DESC_SCALE, 0, MODE_DESC_OFFSET_Y(1), COLOUR_WHITE, COLOUR_BLACK);
 
             break;
-        case 3: // Endless
-            print_text("Reduced coins,", 14, 1, 0, MODE_DESC_OFFSET, 0xffff, 0x0000);
-            print_text("no time limit!", 14, 1, 0, MODE_DESC_OFFSET+LINE(1)+2, 0xffff, 0x0000);
+        case MODE_SELECT_OPTION_ENDLESS: // Endless
+            print_text(STRING(DESC_REDUCED_COINS), MODE_DESC_SCALE, 0, MODE_DESC_OFFSET_Y(0), COLOUR_WHITE, COLOUR_BLACK);
+            print_text(STRING(DESC_NO_TIME_LIMIT), MODE_DESC_SCALE, 0, MODE_DESC_OFFSET_Y(1), COLOUR_WHITE, COLOUR_BLACK);
 
             break;
-        case 4: // Random
-            print_text("Random coins,", 13, 1, 0, MODE_DESC_OFFSET, 0xffff, 0x0000);
-            print_text("random time limit!", 18, 1, 0, MODE_DESC_OFFSET+LINE(1)+2, 0xffff, 0x0000);
+        case MODE_SELECT_OPTION_RANDOM: // Random
+            print_text(STRING(DESC_RANDOM_COINS), MODE_DESC_SCALE, 0, MODE_DESC_OFFSET_Y(0), COLOUR_WHITE, COLOUR_BLACK);
+            print_text(STRING(DESC_RANDOM_TIME_LIMIT), MODE_DESC_SCALE, 0, MODE_DESC_OFFSET_Y(1), COLOUR_WHITE, COLOUR_BLACK);
             
             break;
-        case 5: // Return
-            print_text("Return to menu", 14, 1, 0, MODE_DESC_OFFSET, 0xffff, 0x0000);
+        case MODE_SELECT_OPTION_RETURN: // Return
+            print_text(STRING(DESC_RETURN_TO_MENU), MODE_DESC_SCALE, 0, MODE_DESC_OFFSET_Y(0), COLOUR_WHITE, COLOUR_BLACK);
 
-            break;
-        default:
             break;
         }
 
@@ -116,58 +146,58 @@ void SCENE_F(menu, on_change)()
 {
     s_selected_option = 0;
 
-    SCENE_F(menu, render)();
+    SCENE_F(menu, s_render)();
 }
 
-void step_base_options(const input_status* const input, uint8_t num_options)
+static void home_menu_on_click()
 {
-    if (input->trigger & BUTTON_UP)
-    {
-        if (s_selected_option == 0)
-            s_selected_option = num_options - 1;
-        else
-            --s_selected_option;
-
-        render_menu_scene();
-    } else if (input->trigger & BUTTON_DOWN)
-    {
-        if (s_selected_option == num_options - 1)
-            s_selected_option = 0;
-        else
-            ++s_selected_option;
-
-        render_menu_scene();
-    }
-}
-
-void home_menu_on_click()
-{
-    if (s_selected_option == 0)
-        s_status = STATUS_MODE_SELECT;
-    else if (s_selected_option == 1)
-        s_status = STATUS_ABOUT;
-
+    s_state = MENU_STATE_MODE_SELECT;
     s_selected_option = 0;
 
-    render_menu_scene();
+    SCENE_F(menu, s_render)();
 }
 
-void mode_select_on_click()
+static void mode_select_on_click()
 {
     switch (s_selected_option)
     {
-    case 5: // Return
-        s_status = STATUS_HOME_MENU;
+    case MODE_SELECT_OPTION_ENDLESS:
+        s_state = MENU_STATE_HOME_MENU;
+
+        set_coin_generation_chance(25);
+        set_infobox_start_time(0);
+        set_infobox_coins(0);
+
+        change_scene(SCENE(game));
+
+        break;
+    case MODE_SELECT_OPTION_RANDOM:
+        s_state = MENU_STATE_HOME_MENU;
+
+        set_coin_generation_chance(sys_rand(5, 41));
+        set_infobox_start_time(sys_rand(15, 60*5));
+        set_infobox_coins(sys_rand(1, 51));
+
+        change_scene(SCENE(game));
+
+        break;
+    case MODE_SELECT_OPTION_RETURN: // Return
+        s_state = MENU_STATE_HOME_MENU;
 
         s_selected_option = 0;
-        render_menu_scene();
+        SCENE_F(menu, s_render)();
 
         break;
     default:
-        change_scene(SCENE(game));
+        s_state = MENU_STATE_HOME_MENU;
 
-        set_infobox_start_time(15);
-        set_infobox_coins(1);
+        const uint8_t* mode_values = s_mode_values[s_selected_option];
+
+        set_coin_generation_chance(mode_values[0]);
+        set_infobox_start_time(mode_values[1]);
+        set_infobox_coins(mode_values[2]);
+
+        change_scene(SCENE(game));
 
         break;
     }
@@ -175,31 +205,21 @@ void mode_select_on_click()
 
 void SCENE_F(menu, step)(const input_status* const input)
 {
-    switch (s_status)
+    switch (s_state)
     {
-    case STATUS_HOME_MENU:
-        step_base_options(input, NUM_OPTIONS_HOME_MENU);
-
+    case MENU_STATE_HOME_MENU:
         if (input->trigger & BUTTON_ENTER)
             home_menu_on_click();
 
         break;
-    case STATUS_MODE_SELECT:
-        step_base_options(input, NUM_OPTIONS_MODE_SELECT);
+    case MENU_STATE_MODE_SELECT:
+        if (step_options(input, NUM_OPTIONS_MODE_SELECT, &s_selected_option))
+            s_render_menu_scene();
 
         if (input->trigger & BUTTON_ENTER)
             mode_select_on_click();
 
         break;
-    case STATUS_ABOUT:
-        if (input->trigger & BUTTON_ENTER)
-        {
-            s_selected_option = 0;
-            s_status = STATUS_HOME_MENU;
-
-            render_menu_scene();
-        }
-    
     default:
         break;
     }

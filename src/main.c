@@ -8,25 +8,15 @@
 #include <stdint.h>
 #include <stm32f031x6.h>
 
-#include <io.h>
 #include <util.h>
 #include <rand.h>
-#include <notes.h>
 #include <debug.h>
-#include <images.h>
 #include <display.h>
 
 #include <scenes.h>
 
-#include <rooms.h>
-#include <infobox.h>
-
-#include <character.h>
-
-#include <nucleo_f031k6/adc.h>
 #include <nucleo_f031k6/sound.h>
 #include <nucleo_f031k6/clock.h>
-#include <nucleo_f031k6/serial.h>
 #include <nucleo_f031k6/common.h>
 
 int main()

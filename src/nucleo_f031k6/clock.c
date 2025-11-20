@@ -26,7 +26,7 @@ void nucleo_f031k6_delay(volatile uint16_t ms)
 {
     uint16_t end_time = ms + s_nucleo_f031k6_millis;
 
-	  while(s_nucleo_f031k6_millis != end_time)
+	while(s_nucleo_f031k6_millis != end_time)
 	    __asm(" wfi "); // sleep
 }
 

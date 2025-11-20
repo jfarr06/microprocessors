@@ -47,4 +47,20 @@ bool rect_intersects_circle(uint8_t rect_x, uint8_t rect_y,
                            uint8_t circle_x, uint8_t circle_y, 
                            uint8_t circle_r);
 
+/**
+ * Simplified strlen to get a strings length.
+ *
+ * @param s The string
+ * @return The length of the string.
+ */
+uint8_t strlen_custom(const char* s);
+
+/**
+ * Gets the count of digits in a 16-bit number.
+ *
+ * @param n The number
+ * @return The count of digits in the number.
+ */
+uint8_t digit_count(uint16_t n);
+
 #endif // !UTIL_H_

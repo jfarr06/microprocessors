@@ -5,11 +5,13 @@
  */
 
 #include <stdint.h>
-#include <string.h>
+#include <stdlib.h>
+
 #include <stm32f031x6.h>
 
 #include <nucleo_f031k6/common.h>
 
+#include <util.h>
 #include <debug.h>
 #include <font5x7.h>
 #include <st7735s.h>
@@ -31,6 +33,8 @@ void fill_rect(uint8_t x, uint8_t y, uint8_t width, uint8_t height, uint16_t col
     open_aperture(x, y, x + width - 1, y + height - 1);
 
     st7735s_ramwr();
+
+    st7735s_bufw_beg();
     st7735s_bufw16(colour, px);
     st7735s_bufw_end();
 }
@@ -40,6 +44,8 @@ void put_pixel(uint8_t x, uint8_t y, uint16_t colour)
     open_aperture(x, y, x + 1, y + 1);
     
     st7735s_ramwr();
+
+    st7735s_bufw_beg();
     st7735s_bufw16(colour, 1);
     st7735s_bufw_end();
 }
@@ -48,15 +54,12 @@ void put_image(uint8_t x, uint8_t y, uint8_t width, uint8_t height, const uint16
 {
     open_aperture(x, y, x + width - 1, y + height - 1);
     st7735s_ramwr();
-
-    /* Extract orientation bits */
-    uint8_t hOrientation = orientation & ORIENTATION_HORIZONTAL;
-    uint8_t vOrientation = (orientation & ORIENTATION_VERTICAL) >> 1;
+    st7735s_bufw_beg();
 
     for (y = 0; y < height; y++)
     {
         uint32_t offsetY = 0;
-        if (vOrientation == 0)
+        if ((orientation & ORIENTATION_VERTICAL) == 0)
             offsetY = y * width;
         else
             offsetY = (height - (y + 1)) * width;
@@ -64,7 +67,7 @@ void put_image(uint8_t x, uint8_t y, uint8_t width, uint8_t height, const uint16
         for (x = 0; x < width; x++)
         {
             uint32_t offsetX = 0;
-            if (hOrientation == 0)
+            if ((orientation & ORIENTATION_HORIZONTAL) == 0)
                 offsetX = x;
             else
                 offsetX = width - x - 1;
@@ -75,16 +78,6 @@ void put_image(uint8_t x, uint8_t y, uint8_t width, uint8_t height, const uint16
     }
 
    st7735s_bufw_end(); 
-}
-
-static inline uint8_t strlen_custom(const char* s)
-{
-    uint8_t c = 0;
-
-    while (*(s++))
-        c++;
-
-    return c;
 }
 
 void print_text(const char *text, uint8_t len, uint8_t scale, uint8_t x, uint8_t y, uint16_t fgColour, uint16_t bgColour)
@@ -156,7 +149,7 @@ void print_number(uint16_t number, uint8_t scale, uint8_t x, uint8_t y, uint16_t
     print_text(buf, 0, scale, x, y, fgColour, bgColour);
 }
 
-void draw_line_low_slope(uint8_t x0, uint8_t y0, uint8_t x1, uint8_t y1, uint16_t colour)
+static void draw_line_low_slope(uint8_t x0, uint8_t y0, uint8_t x1, uint8_t y1, uint16_t colour)
 {
     // Reference : https://en.wikipedia.org/wiki/Bresenham%27s_line_algorithm    
     uint8_t dx = x1 - x0;
@@ -185,7 +178,8 @@ void draw_line_low_slope(uint8_t x0, uint8_t y0, uint8_t x1, uint8_t y1, uint16_
         d += 2 * dy;
     }
 }
-void draw_line_high_slope(uint8_t x0, uint8_t y0, uint8_t x1, uint8_t y1, uint16_t colour)
+
+static void draw_line_high_slope(uint8_t x0, uint8_t y0, uint8_t x1, uint8_t y1, uint16_t colour)
 {
     // Reference : https://en.wikipedia.org/wiki/Bresenham%27s_line_algorithm    
     int16_t dx = x1 - x0;
@@ -245,8 +239,9 @@ void draw_rect(uint8_t x, uint8_t y, uint8_t w, uint8_t h, uint16_t colour)
 
 void fill_circle(uint8_t x0, uint8_t y0, uint8_t radius, uint16_t colour)
 {
-// Reference : https://en.wikipedia.org/wiki/Midpoint_circle_algorithm
+    // Reference : https://en.wikipedia.org/wiki/Midpoint_circle_algorithm
 	// Similar to drawCircle but fills the circle with lines instead
+
     uint8_t x = radius-1;
     uint8_t y = 0;
     uint8_t dx = 1;
@@ -294,6 +289,6 @@ void init_display()
 
     DBG_INFO("Filling screen with black...");
 
-    fill_rect(0, 0, SCREEN_W, SCREEN_H, 0x00);
+    fill_rect(0, 0, SCREEN_W, SCREEN_H, COLOUR_BLACK);
 }
 

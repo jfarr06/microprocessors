@@ -33,7 +33,7 @@
 #define BUTTON_DOWN_PINOUT  GPIO_MODER_MODER11_Pos
 #define BUTTON_ENTER_PINOUT GPIO_MODER_MODER0_Pos
 
-uint8_t current_held = 0b00000;
+static uint8_t s_current_held = 0b00000;
 
 void init_io()
 {
@@ -55,10 +55,10 @@ bool read_latest_input(input_status* status)
                    STATUS(DOWN);
 
     status->held = held;
-    status->trigger = ~current_held & held;
-    status->release = current_held & ~held;
+    status->trigger = ~s_current_held & held;
+    status->release = s_current_held & ~held;
 
-    current_held = held;
+    s_current_held = held;
 
     return status != 0;
 }

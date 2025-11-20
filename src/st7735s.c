@@ -20,7 +20,7 @@
 #define SPI1_SCK_PINOUT  GPIO_MODER_MODER5_Pos
 #define SPI1_MOSI_PINOUT GPIO_MODER_MODER7_Pos
 
-uint8_t st7735s_transfer_spi8(uint8_t data)
+uint8_t s_st7735s_transfer_spi8(uint8_t data)
 {
     uint32_t timeout = 1000000;
     uint8_t result = 0;
@@ -38,7 +38,7 @@ uint8_t st7735s_transfer_spi8(uint8_t data)
     return result;
 }
 
-uint16_t st7735s_transfer_spi16(uint16_t data)
+uint16_t s_st7735s_transfer_spi16(uint16_t data)
 {
     uint32_t timeout = 1000000;
     uint8_t result = 0;
@@ -76,7 +76,7 @@ void init_spi()
     SPI1->CR2 |= SPI_CR2_8BIT;
 
     for (uint32_t i = 0; i < sizeof(uint32_t); i++)
-        _dummy_sr = st7735s_transfer_spi8(ST7735S_CMD_NOP);
+        _dummy_sr = s_st7735s_transfer_spi8(ST7735S_CMD_NOP);
 
     F031K6_UNUSED(_dummy_sr);
 }
@@ -84,24 +84,24 @@ void init_spi()
 //====== RST
 
 // Values (used for comp)
-volatile bool _rst_val = false;
-volatile bool _cs_val = false;
-volatile bool _dc_val = false;
+static volatile bool s_rst_val = false;
+static volatile bool s_cs_val = false;
+static volatile bool s_dc_val = false;
 
-void rst_lo()
+static void rst_lo()
 {
-    if (!_rst_val) return;
-    _rst_val = false;
+    if (!s_rst_val) return;
+    s_rst_val = false;
 
     DBG_TRACE("Set RST low");
 
     toggle_nucleo_f031k6_odr_bit(GPIOA, RST, false);
 }
 
-void rst_hi()
+static void rst_hi()
 {
-    if (_rst_val) return;
-    _rst_val = true;
+    if (s_rst_val) return;
+    s_rst_val = true;
 
     DBG_TRACE("Set RST high");    
 
@@ -110,20 +110,20 @@ void rst_hi()
 
 //====== CS
 
-void cs_lo()
+static void cs_lo()
 {
-    if (!_cs_val) return;
-    _cs_val = false; 
+    if (!s_cs_val) return;
+    s_cs_val = false; 
     
     DBG_TRACE("Set CS low");    
  
     toggle_nucleo_f031k6_odr_bit(GPIOA, CS, false);
 }
 
-void cs_hi()
+static void cs_hi()
 {
-    if (_cs_val) return;
-    _cs_val = true; 
+    if (s_cs_val) return;
+    s_cs_val = true; 
 
     DBG_TRACE("Set CS high");    
  
@@ -132,44 +132,48 @@ void cs_hi()
 
 //======= DC
 
-void dc_lo()
+static void dc_lo()
 {
-    if (!_dc_val) return;
-    _dc_val = false;
+    if (!s_dc_val) return;
+    s_dc_val = false;
  
     DBG_TRACE("Set D/C low");    
  
     toggle_nucleo_f031k6_odr_bit(GPIOA, DC, false);
 }
 
-void dc_hi()
+static void dc_hi()
 {
-    if (_dc_val) return;
-    _dc_val = true; 
+    if (s_dc_val) return;
+    s_dc_val = true; 
 
     DBG_TRACE("Set D/C high");    
 
     toggle_nucleo_f031k6_odr_bit(GPIOA, DC, true);
 }
 
+void st7735s_bufw_beg(void)
+{
+    DBG_TRACE("Beginning ST7735S BUFW data transaction.");
+
+    cs_lo();
+    dc_hi();
+}
+
 void st7735s_bufw8(uint8_t data, size_t n)
 {
-    cs_lo();
-    dc_hi(); // Set data mode.
-
-    while (n--) st7735s_transfer_spi8(data);
+    while (n--) s_st7735s_transfer_spi8(data);
 }
 
 void st7735s_bufw16(uint16_t data, size_t n)
 {
-    cs_lo();
-    dc_hi(); // Set data mode.
-
-    while (n--) st7735s_transfer_spi16(data);
+    while (n--) s_st7735s_transfer_spi16(data);
 }
 
 void st7735s_bufw_end()
 {
+    DBG_TRACE("Ending ST7735S BUFW transaction.");
+
     cs_hi();
 }
 
@@ -180,14 +184,14 @@ void st7735s_cmd(uint8_t cmd, uint8_t *data, size_t dataLen)
     cs_lo(); // Set chip select low
     dc_lo(); // Set command mode.
 
-    st7735s_transfer_spi8(cmd); // Write command byte
+    s_st7735s_transfer_spi8(cmd); // Write command byte
 
     if (data)
     {
         dc_hi(); // Set data mode.
 
         for (int i = 0; i < dataLen; i++)
-            st7735s_transfer_spi8(data[i]);
+            s_st7735s_transfer_spi8(data[i]);
     }
 
     cs_hi(); // Set chip select high
