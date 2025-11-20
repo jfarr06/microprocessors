@@ -18,6 +18,8 @@
 #include <infobox.h>
 #include <character.h>
 #include <images_data.h>
+#include <music.h>
+#include <notes.h>
 
 /* Maximum number of rooms that can be generated */
 #define MAX_NUM_ROOMS 5
@@ -331,6 +333,9 @@ void step_rooms()
             inc_infobox_coins();
             fill_circle(COIN_X, COIN_Y, COIN_R, COLOUR_BLACK);
             render_character();
+            
+            /* Play coin collection sound effect */
+            play_sound_effect(E5, 150);
         }
     } else if ((idx = colliding_with_room_transition(player)) >= 0) // Cannot collide with both a coin and a room transition at the same time.
     {
